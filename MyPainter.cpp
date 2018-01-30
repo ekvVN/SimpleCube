@@ -4,7 +4,7 @@
 
 #include "MyPainter.h"
 
-void MyPainter::DrawCube(Pixel *pixs, int width, int height)
-{
-
-}
+//void MyPainter::DrawCube(Pixel *pixs, int width, int height)
+//{
+//
+//}
