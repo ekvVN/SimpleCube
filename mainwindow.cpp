@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
+#include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -37,6 +38,16 @@ MainWindow::MainWindow(QWidget *parent) :
     addAction(_actRight);
     addAction(_actUp);
     addAction(_actDown);
+
+
+    // Label на который будет рисоваться _pixmap;
+    _lblPixmap = new QLabel("TEST");
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(_lblPixmap);
+    this->centralWidget()->setLayout(layout);
+
+    // Начальное изображение
+    _pixmap = QPixmap(640, 512);
 }
 
 MainWindow::~MainWindow()
@@ -47,6 +58,10 @@ MainWindow::~MainWindow()
 void MainWindow::updateImage()
 {
     //qDebug() << "WAAAAGH!";
+
+    // Вывод получившегося изображения
+    QPixmap local = _pixmap;
+    _lblPixmap->setPixmap(local);
 }
 
 void MainWindow::OnPressLeft()

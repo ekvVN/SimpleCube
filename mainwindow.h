@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <QAction>
+#include <QLabel>
+#include <QPixmap>
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +29,9 @@ private:
     QAction *_actRight;
     QAction *_actUp;
     QAction *_actDown;
+
+    QLabel *_lblPixmap;
+    QPixmap _pixmap;
 
 private slots:
     //Слот для обновления
