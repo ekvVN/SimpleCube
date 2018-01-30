@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QVBoxLayout>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -51,11 +52,25 @@ MainWindow::MainWindow(QWidget *parent) :
     _width = 640;
     _height = 512;
     _pixmap = QPixmap(_width, _height);
+
+    // Чтение модели
+    const char *filename = "obj/african_head.obj";
+    if(QFile::exists(filename))
+    {
+        qDebug() << "read model:" << filename;
+        _model = new Model(filename);
+        _myPainter.SetModel(_model);
+    }
+    else
+    {
+        qDebug() << "file not exist" << filename;
+    }
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete _model;
 }
 
 void MainWindow::updateImage()

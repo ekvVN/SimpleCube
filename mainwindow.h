@@ -8,6 +8,7 @@
 #include <QPixmap>
 
 #include "MyPainter.h"
+#include "model.h"
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +37,7 @@ private:
     int _width;
     int _height;
     QPixmap _pixmap;
+    Model *_model;
 
     MyPainter _myPainter;
     int _ticks;

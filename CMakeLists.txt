@@ -20,6 +20,9 @@ set(SOURCE_FILES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        geometry.h
+        model.cpp
+        model.h
         MyPainter.cpp
         MyPainter.h)
 
