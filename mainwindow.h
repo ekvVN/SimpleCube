@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QAction>
 
 namespace Ui {
 class MainWindow;
@@ -20,11 +21,21 @@ private:
     Ui::MainWindow *ui;
 
     // Таймер для установки отображаемого изображения
-    QTimer *updateTimer;
+    QTimer *_updateTimer;
+
+    QAction *_actLeft;
+    QAction *_actRight;
+    QAction *_actUp;
+    QAction *_actDown;
 
 private slots:
     //Слот для обновления
     void updateImage();
+
+    void OnPressLeft();
+    void OnPressRight();
+    void OnPressUp();
+    void OnPressDown();
 };
 
 #endif // MAINWINDOW_H
