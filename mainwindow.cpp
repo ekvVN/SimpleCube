@@ -6,7 +6,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    _ticks(0)
 {
     ui->setupUi(this);
 
@@ -47,7 +48,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->centralWidget()->setLayout(layout);
 
     // Начальное изображение
-    _pixmap = QPixmap(640, 512);
+    _width = 640;
+    _height = 512;
+    _pixmap = QPixmap(_width, _height);
 }
 
 MainWindow::~MainWindow()
@@ -57,6 +60,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateImage()
 {
+    _ticks++;
+    RedrawPixmap();
     //qDebug() << "WAAAAGH!";
 
     // Вывод получившегося изображения
@@ -64,22 +69,48 @@ void MainWindow::updateImage()
     _lblPixmap->setPixmap(local);
 }
 
+void MainWindow::RedrawPixmap()
+{
+    // ToDo Для теста, изменение цвета каждый тик
+    QImage local(_width, _height, QImage::Format_ARGB32);
+    QColor color;
+    color.setRed(_ticks % 255);
+    local.fill(color);
+
+    // Получение указателя на данные изображения
+    auto ptrData = local.scanLine(0);
+    auto pixs = (Pixel*)ptrData;
+
+    _myPainter.DrawCube(pixs, local.width(), local.height());
+
+    _pixmap = QPixmap::fromImage(local);
+}
+
 void MainWindow::OnPressLeft()
 {
     qDebug() << "OnPressLeft";
+    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    RedrawPixmap();
 }
 
 void MainWindow::OnPressRight()
 {
     qDebug() << "OnPressRight";
+    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    RedrawPixmap();
 }
 
 void MainWindow::OnPressUp()
 {
     qDebug() << "OnPressUp";
+    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    RedrawPixmap();
 }
 
 void MainWindow::OnPressDown()
 {
     qDebug() << "OnPressDown";
+    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    RedrawPixmap();
 }
+

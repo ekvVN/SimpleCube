@@ -20,7 +20,8 @@ set(SOURCE_FILES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        )
+        MyPainter.cpp
+        MyPainter.h)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 

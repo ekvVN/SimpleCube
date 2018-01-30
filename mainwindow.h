@@ -7,6 +7,8 @@
 #include <QLabel>
 #include <QPixmap>
 
+#include "MyPainter.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -31,7 +33,14 @@ private:
     QAction *_actDown;
 
     QLabel *_lblPixmap;
+    int _width;
+    int _height;
     QPixmap _pixmap;
+
+    MyPainter _myPainter;
+    int _ticks;
+
+    void RedrawPixmap();
 
 private slots:
     //Слот для обновления
