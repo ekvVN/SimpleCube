@@ -54,7 +54,11 @@ MainWindow::MainWindow(QWidget *parent) :
     _pixmap = QPixmap(_width, _height);
 
     // Чтение модели
-    const char *filename = "obj/african_head.obj";
+    const char *filename = "obj/empty";
+//    const char *filename = "obj/african_head.obj";
+//    const char *filename = "obj/Cube.obj";
+//    const char *filename = "obj/cube.obj";
+//    const char *filename = "obj/cube2.obj";
     if(QFile::exists(filename))
     {
         qDebug() << "read model:" << filename;
