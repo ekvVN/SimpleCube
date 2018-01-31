@@ -2,8 +2,8 @@
 // Created by root on 31.01.18.
 //
 
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef MATRIX3X3_H
+#define MATRIX3X3_H
 
 #include <iostream>
 
@@ -128,9 +128,9 @@ class Matrix3x3
 
     Matrix3x3 operator/=(const T& rhs) const
     {
-        _m11 /= rhs.m11_; _m12 /= rhs.m12_; _m13 /= rhs.m13_;
-        _m21 /= rhs.m21_; _m22 /= rhs.m22_; _m23 /= rhs.m23_;
-        _m31 /= rhs.m31_; _m32 /= rhs.m32_; _m33 /= rhs.m33_;
+        _m11 /= rhs._m11; _m12 /= rhs._m12; _m13 /= rhs._m13;
+        _m21 /= rhs._m21; _m22 /= rhs._m22; _m23 /= rhs._m23;
+        _m31 /= rhs._m31; _m32 /= rhs._m32; _m33 /= rhs._m33;
         return *this;
     };
 };
@@ -139,15 +139,9 @@ template<typename T>
 Matrix3x3<T> operator*(const T& val, const Matrix3x3<T>& m)
 {
     Matrix3x3<T> res(m);
-    res._m11 *= val;
-    res._m12 *= val;
-    res._m13 *= val;
-    res._m21 *= val;
-    res._m22 *= val;
-    res._m23 *= val;
-    res._m31 *= val;
-    res._m32 *= val;
-    res._m33 *= val;
+    res._m11 *= val; res._m12 *= val; res._m13 *= val;
+    res._m21 *= val; res._m22 *= val; res._m23 *= val;
+    res._m31 *= val; res._m32 *= val; res._m33 *= val;
     return res;
 };
 
@@ -195,4 +189,4 @@ const Matrix3x3<long long> unit_matrix_ll( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
 const Matrix3x3<float> unit_matrix_f( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
 const Matrix3x3<double> unit_matrix_d( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
 
-#endif //MATRIX_H
+#endif //MATRIX3X3_H
