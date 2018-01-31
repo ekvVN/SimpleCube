@@ -85,8 +85,11 @@ public:
             // 1. Отрисовка контуров модели
             draw_model(_model, image, white);
 
-            // 2. Заливка треугольников рандомным цветом
-            random_fill_model(_model, image);
+            // 2.1. Заливка треугольников модели
+            fill_model(_model, image, green);
+
+            // 2.2 Заливка треугольников модели рандомным цветом
+//            random_fill_model(_model, image);
         }
         else
         {
@@ -211,6 +214,23 @@ public:
         }
     }
 
+    // Заливка треугольников модели
+    void fill_model(Model *model, Image &image, Pixel color)
+    {
+        int width = image.width();
+        int height = image.height();
+
+        for (int i=0; i<model->nfaces(); i++) {
+            std::vector<int> face = model->face(i);
+            Vec2i screen_coords[3];
+            for (int j=0; j<3; j++) {
+                Vec3f world_coords = model->vert(face[j]);
+                screen_coords[j] = Vec2i((world_coords.x+1.)*width/2., (world_coords.y+1.)*height/2.);
+            }
+            fill_triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, color);
+        }
+    }
+
     // Заливка треугольников модели рандомным цветом
     void random_fill_model(Model *model, Image &image)
     {
@@ -228,6 +248,7 @@ public:
             fill_triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, randColor);
         }
     }
+
 };
 
 
