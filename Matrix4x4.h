@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "geometry.h"
-#include <math>
+#include <math.h>
 
 template<typename T>
 class Matrix4x4
@@ -238,5 +238,15 @@ Matrix4x4<T> GetRotateMatrix(Vec3<T> vec, T radAngle)
     );
     return rotateMatrix;
 }
+
+template<typename T>
+Vec3<T> operator*(Vec3<T> v, Matrix4x4<T>& m)
+{
+    Vec3<T> res;
+    res.x = v.x * m._m11 + v.y * m._m21 + v.z * m._m31;
+    res.y = v.x * m._m12 + v.y * m._m22 + v.z * m._m32;
+    res.z = v.x * m._m13 + v.y * m._m23 + v.z * m._m33;
+    return res;
+};
 
 #endif //MATRIX4X4_H

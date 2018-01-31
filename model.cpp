@@ -52,3 +52,7 @@ Vec3f Model::vert(int i) {
     return verts_[i];
 }
 
+void Model::set_vert(int i, Vec3f v) {
+    verts_[i] = v;
+}
+

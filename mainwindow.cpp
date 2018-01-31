@@ -8,7 +8,10 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _ticks(0)
+    _ticks(0),
+    _rotateVectLeftRight(0.0f, 1.0f, 0.0f),
+    _rotateVectUpDown(1.0f, 0.0f, 0.0f),
+    _rotateRadAngle(0.05f)
 {
     ui->setupUi(this);
 
@@ -54,8 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _pixmap = QPixmap(_width, _height);
 
     // Чтение модели
-    const char *filename = "obj/empty";
-//    const char *filename = "obj/african_head.obj";
+//    const char *filename = "obj/empty";
+    const char *filename = "obj/african_head.obj";
 //    const char *filename = "obj/Cube.obj";
 //    const char *filename = "obj/cube.obj";
 //    const char *filename = "obj/cube2.obj";
@@ -107,29 +110,29 @@ void MainWindow::RedrawPixmap()
 
 void MainWindow::OnPressLeft()
 {
-    qDebug() << "OnPressLeft";
-    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    Matrix4x4<float> m = GetRotateMatrix(_rotateVectLeftRight, _rotateRadAngle);
+    _myPainter.RotateModel(m);
     RedrawPixmap();
 }
 
 void MainWindow::OnPressRight()
 {
-    qDebug() << "OnPressRight";
-    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    Matrix4x4<float> m = GetRotateMatrix(_rotateVectLeftRight, -_rotateRadAngle);
+    _myPainter.RotateModel(m);
     RedrawPixmap();
 }
 
 void MainWindow::OnPressUp()
 {
-    qDebug() << "OnPressUp";
-    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    Matrix4x4<float> m = GetRotateMatrix(_rotateVectUpDown, _rotateRadAngle);
+    _myPainter.RotateModel(m);
     RedrawPixmap();
 }
 
 void MainWindow::OnPressDown()
 {
-    qDebug() << "OnPressDown";
-    // ToDo поменять какой-нибудь коээфициент, который будет учавствовать в перерисовке
+    Matrix4x4<float> m = GetRotateMatrix(_rotateVectUpDown, -_rotateRadAngle);
+    _myPainter.RotateModel(m);
     RedrawPixmap();
 }
 

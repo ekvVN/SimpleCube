@@ -44,6 +44,13 @@ private:
 
     void RedrawPixmap();
 
+    // Угол поворота в радианах
+    float _rotateRadAngle;
+    // Вектор оси поворота влево/вправо
+    Vec3f _rotateVectLeftRight;
+    // Вектор оси поворота вверх/вниз
+    Vec3f _rotateVectUpDown;
+
 private slots:
     //Слот для обновления
     void updateImage();
