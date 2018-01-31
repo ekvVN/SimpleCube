@@ -109,6 +109,14 @@ public:
             triangle(t0[0], t0[1], t0[2], image, red);
             triangle(t1[0], t1[1], t1[2], image, green);
             triangle(t2[0], t2[1], t2[2], image, blue);
+
+            Vec2i fill_t0[3] = {Vec2i(210, 70),   Vec2i(250, 160),  Vec2i(270, 80)};
+            Vec2i fill_t1[3] = {Vec2i(380, 50),  Vec2i(350, 1),   Vec2i(270, 180)};
+            Vec2i fill_t2[3] = {Vec2i(380, 150), Vec2i(320, 160), Vec2i(330, 180)};
+
+            fill_triangle(fill_t0[0], fill_t0[1], fill_t0[2], image, red);
+            fill_triangle(fill_t1[0], fill_t1[1], fill_t1[2], image, green);
+            fill_triangle(fill_t2[0], fill_t2[1], fill_t2[2], image, blue);
         }
     }
 
@@ -147,10 +155,38 @@ public:
         line(p0.x, p0.y, p1.x, p1.y, image, color);
     }
 
+    // Отрисовка контура треугольника
     void triangle(Vec2i t0, Vec2i t1, Vec2i t2, Image &image, Pixel color) {
+        // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
+        if (t0.y>t1.y) std::swap(t0, t1);
+        if (t0.y>t2.y) std::swap(t0, t2);
+        if (t1.y>t2.y) std::swap(t1, t2);
+
         line(t0, t1, image, color);
         line(t1, t2, image, color);
         line(t2, t0, image, color);
+    }
+
+    // Отрисовка закрашенного треугольника
+    void fill_triangle(Vec2i t0, Vec2i t1, Vec2i t2, Image &image, Pixel color) {
+        if (t0.y==t1.y && t0.y==t2.y) return; // i dont care about degenerate triangles
+        // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
+        if (t0.y>t1.y) std::swap(t0, t1);
+        if (t0.y>t2.y) std::swap(t0, t2);
+        if (t1.y>t2.y) std::swap(t1, t2);
+        int total_height = t2.y-t0.y;
+        for (int i=0; i<total_height; i++) {
+            bool second_half = i>t1.y-t0.y || t1.y==t0.y;
+            int segment_height = second_half ? t2.y-t1.y : t1.y-t0.y;
+            float alpha = (float)i/total_height;
+            float beta  = (float)(i-(second_half ? t1.y-t0.y : 0))/segment_height; // be careful: with above conditions no division by zero here
+            Vec2i A =               t0 + (t2-t0)*alpha;
+            Vec2i B = second_half ? t1 + (t2-t1)*beta : t0 + (t1-t0)*beta;
+            if (A.x>B.x) std::swap(A, B);
+            for (int j=A.x; j<=B.x; j++) {
+                image.set(j, t0.y+i, color); // attention, due to int casts t0.y+i != A.y
+            }
+        }
     }
 };
 
