@@ -20,6 +20,7 @@ set(SOURCE_FILES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        geometry.cpp
         geometry.h
         model.cpp
         model.h
