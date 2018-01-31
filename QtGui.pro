@@ -21,6 +21,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h\
         MyPainter.h\
         geometry.h
-        model.h
+        model.h\
+        Matrix3x3.h
 
 FORMS    += mainwindow.ui
