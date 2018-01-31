@@ -83,13 +83,17 @@ public:
         if(_model)
         {
             // 1. Отрисовка контуров модели
-            draw_model(_model, image, white);
+//            draw_model(_model, image, white);
 
             // 2.1. Заливка треугольников модели
-            fill_model(_model, image, green);
+//            fill_model(_model, image, green);
 
             // 2.2 Заливка треугольников модели рандомным цветом
 //            random_fill_model(_model, image);
+
+            // 2.3 Заливка треугольников модели с учетом нормалей и направления света
+            Vec3f light_dir(0,0,-1);    // вектор направления света
+            fill_model_with_normal(_model, image, light_dir);
         }
         else
         {
@@ -249,6 +253,31 @@ public:
         }
     }
 
+    // Заливка треугольников модели с учетом нормалей и направления света
+    // light_dir - вектор направление света
+    void fill_model_with_normal(Model *model, Image &image, Vec3f &light_dir)
+    {
+        int width = image.width();
+        int height = image.height();
+
+        for (int i=0; i<model->nfaces(); i++) {
+            std::vector<int> face = model->face(i);
+            Vec2i screen_coords[3];
+            Vec3f world_coords[3];
+            for (int j=0; j<3; j++) {
+                Vec3f v = model->vert(face[j]);
+                screen_coords[j] = Vec2i((v.x+1.)*width/2., (v.y+1.)*height/2.);
+                world_coords[j]  = v;
+            }
+            Vec3f n = (world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
+            n.normalize();
+            float intensity = n*light_dir;
+            if (intensity>0) {
+                Pixel color = {intensity*255, intensity*255, intensity*255, 255};
+                fill_triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, color);
+            }
+        }
+    }
 };
 
 
