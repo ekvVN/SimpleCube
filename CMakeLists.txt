@@ -27,7 +27,6 @@ set(SOURCE_FILES
         MyPainter.cpp
         MyPainter.h
         Matrix3x3.h
-        Matrix4x4.h
         )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

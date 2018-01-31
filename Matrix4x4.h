@@ -206,47 +206,6 @@ std::wostream& operator<<(std::wostream& stream, const Matrix4x4<T>& m)
 //const Matrix3x3<float> unit_matrix_f( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
 //const Matrix3x3<double> unit_matrix_d( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
 
-// Получить матрицу поворота относительно произвольной оси на заданный угол (в радианах)
-// vec - ось
-// radAngle - угол в радианах
-template<class T>
-Matrix4x4<T> GetRotateMatrix(Vec3<T> vec, T radAngle)
-{
-    T x = vec.x;
-    T y = vec.y;
-    T z = vec.z;
-    T sinA = sin(radAngle);
-    T cosA = cos(radAngle);
 
-    T m11 = cosA + (1.0 - cosA) * x * x;
-    T m12 = (1.0 - cosA) * x * y - sinA * z;
-    T m13 = (1.0 - cosA) * x * z + sinA * y;
-
-    T m21 = (1.0 - cosA) * y * x + sinA * z;
-    T m22 = cosA + (1.0 - cosA) * y * y;
-    T m23 = (1.0 - cosA) * y * z - sinA * x;
-
-    T m31 = (1.0 - cosA) * z * x - sinA * y;
-    T m32 = (1.0 - cosA) * z * y + sinA * x;
-    T m33 = cosA + (1.0 - cosA) * z * z;
-
-    Matrix4x4<T> rotateMatrix(
-        m11, m12, m13, 0.0,
-        m21, m22, m23, 0.0,
-        m31, m32, m33, 0.0,
-        0.0, 0.0, 0.0, 1.0
-    );
-    return rotateMatrix;
-}
-
-template<typename T>
-Vec3<T> operator*(Vec3<T> v, Matrix4x4<T>& m)
-{
-    Vec3<T> res;
-    res.x = v.x * m._m11 + v.y * m._m21 + v.z * m._m31;
-    res.y = v.x * m._m12 + v.y * m._m22 + v.z * m._m32;
-    res.z = v.x * m._m13 + v.y * m._m23 + v.z * m._m33;
-    return res;
-};
 
 #endif //MATRIX4X4_H

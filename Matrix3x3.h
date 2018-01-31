@@ -6,6 +6,8 @@
 #define MATRIX3X3_H
 
 #include <iostream>
+#include "geometry.h"
+#include <math.h>
 
 template<typename T>
 class Matrix3x3
@@ -173,20 +175,45 @@ std::wostream& operator<<(std::wostream& stream, const Matrix3x3<T>& m)
     return stream;
 };
 
-const Matrix3x3<char> zero_matrix_c( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-const Matrix3x3<short> zero_matrix_s( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-const Matrix3x3<int> zero_matrix( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-const Matrix3x3<long> zero_matrix_l( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-const Matrix3x3<long long> zero_matrix_ll( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-const Matrix3x3<float> zero_matrix_f( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-const Matrix3x3<double> zero_matrix_d( 0, 0, 0, 0, 0, 0, 0, 0, 0 );
+// Получить матрицу поворота относительно произвольной оси на заданный угол (в радианах)
+// vec - ось
+// radAngle - угол в радианах
+template<class T>
+Matrix3x3<T> GetRotateMatrix(Vec3<T> vec, T radAngle)
+{
+    T x = vec.x;
+    T y = vec.y;
+    T z = vec.z;
+    T sinA = sin(radAngle);
+    T cosA = cos(radAngle);
 
-const Matrix3x3<char> unit_matrix_c( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
-const Matrix3x3<short> unit_matrix_s( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
-const Matrix3x3<int> unit_matrix( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
-const Matrix3x3<long> unit_matrix_l( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
-const Matrix3x3<long long> unit_matrix_ll( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
-const Matrix3x3<float> unit_matrix_f( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
-const Matrix3x3<double> unit_matrix_d( 1, 0, 0, 0, 1, 0, 0, 0, 1 );
+    T m11 = cosA + (1.0 - cosA) * x * x;
+    T m12 = (1.0 - cosA) * x * y - sinA * z;
+    T m13 = (1.0 - cosA) * x * z + sinA * y;
 
+    T m21 = (1.0 - cosA) * y * x + sinA * z;
+    T m22 = cosA + (1.0 - cosA) * y * y;
+    T m23 = (1.0 - cosA) * y * z - sinA * x;
+
+    T m31 = (1.0 - cosA) * z * x - sinA * y;
+    T m32 = (1.0 - cosA) * z * y + sinA * x;
+    T m33 = cosA + (1.0 - cosA) * z * z;
+
+    Matrix3x3<T> rotateMatrix(
+        m11, m12, m13,
+        m21, m22, m23,
+        m31, m32, m33
+    );
+    return rotateMatrix;
+}
+
+template<typename T>
+Vec3<T> operator*(Vec3<T> v, Matrix3x3<T>& m)
+{
+    Vec3<T> res;
+    res.x = v.x * m._m11 + v.y * m._m21 + v.z * m._m31;
+    res.y = v.x * m._m12 + v.y * m._m22 + v.z * m._m32;
+    res.z = v.x * m._m13 + v.y * m._m23 + v.z * m._m33;
+    return res;
+};
 #endif //MATRIX3X3_H

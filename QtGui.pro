@@ -22,7 +22,6 @@ HEADERS  += mainwindow.h\
         MyPainter.h\
         geometry.h
         model.h\
-        Matrix3x3.h\
-        Matrix4x4.h
+        Matrix3x3.h
 
 FORMS    += mainwindow.ui

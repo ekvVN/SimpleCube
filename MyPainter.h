@@ -10,7 +10,7 @@
 #include <limits>
 
 #include "model.h"
-#include "Matrix4x4.h"
+#include "Matrix3x3.h"
 
 struct Pixel
 {
@@ -67,7 +67,7 @@ public:
         _model = model;
     }
 
-    void RotateModel(Matrix4x4<float> m)
+    void RotateModel(Matrix3x3<float> m)
     {
         for (int i = 0; i < _model->nverts(); i++)
         {

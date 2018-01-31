@@ -110,28 +110,28 @@ void MainWindow::RedrawPixmap()
 
 void MainWindow::OnPressLeft()
 {
-    Matrix4x4<float> m = GetRotateMatrix(_rotateVectLeftRight, _rotateRadAngle);
+    auto m = GetRotateMatrix(_rotateVectLeftRight, _rotateRadAngle);
     _myPainter.RotateModel(m);
     RedrawPixmap();
 }
 
 void MainWindow::OnPressRight()
 {
-    Matrix4x4<float> m = GetRotateMatrix(_rotateVectLeftRight, -_rotateRadAngle);
+    auto m = GetRotateMatrix(_rotateVectLeftRight, -_rotateRadAngle);
     _myPainter.RotateModel(m);
     RedrawPixmap();
 }
 
 void MainWindow::OnPressUp()
 {
-    Matrix4x4<float> m = GetRotateMatrix(_rotateVectUpDown, _rotateRadAngle);
+    auto m = GetRotateMatrix(_rotateVectUpDown, _rotateRadAngle);
     _myPainter.RotateModel(m);
     RedrawPixmap();
 }
 
 void MainWindow::OnPressDown()
 {
-    Matrix4x4<float> m = GetRotateMatrix(_rotateVectUpDown, -_rotateRadAngle);
+    auto m = GetRotateMatrix(_rotateVectUpDown, -_rotateRadAngle);
     _myPainter.RotateModel(m);
     RedrawPixmap();
 }
