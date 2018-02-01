@@ -20,7 +20,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h\
         MyPainter.h\
-        geometry.h
+        geometry.h\
         model.h\
         Matrix3x3.h
 
