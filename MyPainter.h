@@ -55,6 +55,7 @@ private:
 class MyPainter
 {
     Model *_model;
+    std::vector<int> _zbuffer;
 public:
 
     MyPainter()
@@ -339,9 +340,12 @@ public:
         const int depth  = 255;
 
         // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным:
-        int *zbuffer = new int[width*height];
+        auto size = width*height;
+        if (_zbuffer.size() != size)
+            _zbuffer.resize(size);
+
         for (int i=0; i<width*height; i++) {
-            zbuffer[i] = std::numeric_limits<int>::min();
+            _zbuffer[i] = std::numeric_limits<int>::min();
         }
 
         for (int i=0; i<model->nfaces(); i++) {
@@ -358,7 +362,7 @@ public:
             float intensity = n*light_dir;
             if (intensity>0) {
                 Pixel color = {intensity*255, intensity*255, intensity*255, 255};
-                fill_triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, color, zbuffer);
+                fill_triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, color, _zbuffer.data());
             }
         }
     }
