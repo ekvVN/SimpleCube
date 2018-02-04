@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    const char *filename = "obj/cube2.obj";
 //    const char *filename = "obj/CubeMy.obj";
     const char *filename = "obj/CubeMy3.obj";
+//    const char *filename = "obj/CubeMy4.obj";
     if(QFile::exists(filename))
     {
         qDebug() << "read model:" << filename;
