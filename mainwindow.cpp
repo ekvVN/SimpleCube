@@ -58,13 +58,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Чтение модели
 //    const char *filename = "obj/empty";
-//    const char *filename = "obj/african_head.obj";
+    const char *filename = "obj/african_head.obj";
 //    const char *filename = "obj/Cube.obj";
 //    const char *filename = "obj/cube.obj";
 //    const char *filename = "obj/cube2.obj";
 //    const char *filename = "obj/CubeMy.obj";
-    const char *filename = "obj/CubeMy3.obj";
+//    const char *filename = "obj/CubeMy3.obj";
 //    const char *filename = "obj/CubeMy4.obj";
+//    const char *filename = "obj/Cylinder.obj";
     if(QFile::exists(filename))
     {
         qDebug() << "read model:" << filename;
@@ -98,8 +99,8 @@ void MainWindow::RedrawPixmap()
 {
     // ToDo Для теста, изменение цвета каждый тик
     QImage local(_width, _height, QImage::Format_ARGB32);
-    QColor color;
-    color.setRed(_ticks % 255);
+    QColor color(0,0,0);
+//    color.setRed(_ticks % 255);
     local.fill(color);
 
     // Получение указателя на данные изображения
