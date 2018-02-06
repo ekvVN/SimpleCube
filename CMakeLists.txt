@@ -12,6 +12,10 @@ set(CMAKE_AUTOUIC ON)
 # to always look for includes there:
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+SET(CMAKE_CXX_FLAGS "-O2")
+#SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
+#SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+
 # Widgets finds its own dependencies.
 find_package(Qt5Widgets REQUIRED)
 
@@ -27,6 +31,9 @@ set(SOURCE_FILES
         MyPainter.cpp
         MyPainter.h
         Matrix3x3.h
+        PrimitivePainter.cpp
+        PrimitivePainter.h
+        Image.h
         )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

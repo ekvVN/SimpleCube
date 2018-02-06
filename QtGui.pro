@@ -17,12 +17,15 @@ SOURCES += main.cpp\
         mainwindow.cpp\
         MyPainter.cpp\
         geometry.cpp\
+        PrimitivePainter.cpp\
         model.cpp
 
 HEADERS  += mainwindow.h\
         MyPainter.h\
         geometry.h\
         model.h\
-        Matrix3x3.h
+        Matrix3x3.h\
+        PrimitivePainter.h\
+        Image.h
 
 FORMS    += mainwindow.ui
