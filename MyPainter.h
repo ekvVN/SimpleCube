@@ -19,7 +19,7 @@ class MyPainter
 {
     PrimitivePainter _painter;
     Model *_model;
-    std::shared_ptr<Model> _testModel;  // Тестовая модель из одноuо треугольника с нормалями для заливки
+    std::shared_ptr<Model> _testModel;  // Тестовая модель с нормалями для заливки
     std::vector<int> _zbuffer;
 public:
 
@@ -76,7 +76,7 @@ public:
             // 2.2 Заливка треугольников модели рандомным цветом
 //            random_fill_model(_model, image);
 
-            Vec3f light_dir(0,0,-1);    // вектор направления света
+            Vec3f light_dir(0,0,1);    // вектор направления света
             // 2.3 Заливка треугольников модели с учетом нормалей и направления света
 //            fill_model_with_normal(_model, image, light_dir);
 
@@ -119,29 +119,33 @@ public:
             _painter.fill_triangle(image, fill_t1[0], fill_t1[1], fill_t1[2], green);
             _painter.fill_triangle(image, fill_t2[0], fill_t2[1], fill_t2[2], blue);
 
-            // Тестовая модель из одноuо треугольника с нормалями для заливки
+            // Тестовая модель с нормалями для заливки
             if(!_testModel)
             {
                 std::vector<Vec3f> verts = {
-                    Vec3f(0.5, 0.5, 0.5),
-                    Vec3f(0.5, 0.5, -0.5),
-                    Vec3f(0.5, -0.5, -0.5)
+                    Vec3f(0.5, -0.5, 0.2),
+                    Vec3f(0.5,  0.5, 0.2),
+                    Vec3f(0.3, -0.5, 0.3),
+                    Vec3f(0.3,  0.5, 0.3),
+                    Vec3f(0.2, -0.5, 0.5),
+                    Vec3f(0.2,  0.5, 0.5),
                 };
                 std::vector<Vec3f> normals = {
-                    Vec3f(0.0, 0.5, 0.5),
-                    Vec3f(0.5, 0.5, -0.5),
-                    Vec3f(0.5, -0.5, -0.5)
+                    Vec3f(0.5, 0.0, 0.8),
+                    Vec3f(0.8, 0.0, 0.5),
                 };
 
                 std::vector<std::vector<faceVertex>> faces = {
-                    {
-                        {0, 0, 0}, {1, 1, 1}, {2, 2, 2},
-                    }
+                    { {5, 0, 0}, {4, 0, 0}, {3, 0, 0} },
+                    { {2, 0, 0}, {3, 0, 0}, {4, 0, 0} },
+                    { {1, 0, 1}, {3, 0, 1}, {2, 0, 1} },
+                    { {0, 0, 1}, {1, 0, 1}, {2, 0, 1} },
                 };
                 _testModel = std::make_shared<Model>(verts, normals, faces);
             }
             Vec3f light_dir(0,0,-1);    // вектор направления света
-            fill_model_with_z_buffer2(_testModel.get(), image, light_dir);
+//            random_fill_model(_testModel.get(), image);
+            fill_model_with_z_buffer(_testModel.get(), image, light_dir);
         }
     }
 
@@ -254,7 +258,9 @@ public:
                 screen_coords[j] = Vec3i((v.x+1.)*width/2., (v.y+1.)*height/2., (v.z+1.)*depth/2.);
                 world_coords[j]  = v;
             }
-            Vec3f n = (world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
+//            Vec3f n = (world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);    // CA ^ BA
+            Vec3f n = (world_coords[0]-world_coords[1])^(world_coords[0]-world_coords[2]);    // AB ^ AC
+//            Vec3f n = (world_coords[0]-world_coords[2])^(world_coords[0]-world_coords[1]);      // AC ^ AB
             n.normalize();
             float intensity = n*light_dir;
             if (intensity>0) {

@@ -5,6 +5,8 @@
 #ifndef QTGUIEXAMPLE_IMAGE_H
 #define QTGUIEXAMPLE_IMAGE_H
 
+#include "geometry.h"
+
 struct Pixel
 {
 
