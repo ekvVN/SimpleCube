@@ -51,10 +51,8 @@ void PrimitivePainter::draw_line(Image &image, std::array<Vec2i, 2> p, Pixel col
 
 void PrimitivePainter::draw_triangle(Image &image, std::array<Vec2i, 3> p, Pixel color)
 {
-    // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-    if (p[0].y > p[1].y) std::swap(p[0], p[1]);
-    if (p[0].y > p[2].y) std::swap(p[0], p[2]);
-    if (p[1].y > p[2].y) std::swap(p[1], p[2]);
+    if(!sort_verts(p))
+        return;
 
     draw_line(image, {p[0], p[1]}, color);
     draw_line(image, {p[1], p[2]}, color);
@@ -63,11 +61,9 @@ void PrimitivePainter::draw_triangle(Image &image, std::array<Vec2i, 3> p, Pixel
 
 void PrimitivePainter::fill_triangle(Image &image, std::array<Vec2i, 3> p, Pixel color)
 {
-    if (p[0].y == p[1].y && p[0].y == p[2].y) return; // i dont care about degenerate triangles
-    // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-    if (p[0].y > p[1].y) std::swap(p[0], p[1]);
-    if (p[0].y > p[2].y) std::swap(p[0], p[2]);
-    if (p[1].y > p[2].y) std::swap(p[1], p[2]);
+    if(!sort_verts(p))
+        return;
+
     int total_height = p[2].y - p[0].y;
     for (int i = 0; i < total_height; i++)
     {
@@ -92,13 +88,12 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec2i, 3> p, Pixel
 
 void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, Pixel color, std::vector<int> &zbuffer)
 {
+    if(!sort_verts(p))
+        return;
+
     int width = image.width();
     int height = image.height();
 
-    if (p[0].y == p[1].y && p[0].y == p[2].y) return; // i dont care about degenerate triangles
-    if (p[0].y > p[1].y) std::swap(p[0], p[1]);
-    if (p[0].y > p[2].y) std::swap(p[0], p[2]);
-    if (p[1].y > p[2].y) std::swap(p[1], p[2]);
     int total_height = p[2].y - p[0].y;
     for (int i = 0; i < total_height; i++)
     {
@@ -130,12 +125,13 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, Pixel
     }
 }
 
+
 void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::array<float, 3> ity, std::vector<int> &zbuffer)
 {
     int width = image.width();
     int height = image.height();
 
-    if (p[0].y == p[1].y && p[0].y == p[2].y) return; // i dont care about degenerate triangles
+    if (p[0].y == p[1].y && p[0].y == p[2].y) return;
     if (p[0].y > p[1].y)
     {
         std::swap(p[0], p[1]);
@@ -192,3 +188,18 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
         }
     }
 }
+
+template<typename T>
+bool PrimitivePainter::sort_verts(std::array<T, 3> &p)
+{
+    // false - если все вершины находятся на одной высоте, чтобы не рисовать просто линию 0-ой высоты
+    if (p[0].y == p[1].y && p[0].y == p[2].y)
+        return true; // i dont care about degenerate triangles
+
+    if (p[0].y > p[1].y) std::swap(p[0], p[1]);
+    if (p[0].y > p[2].y) std::swap(p[0], p[2]);
+    if (p[1].y > p[2].y) std::swap(p[1], p[2]);
+
+    return true;
+}
+
