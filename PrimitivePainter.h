@@ -24,6 +24,8 @@ public:
     void fill_triangle(Image &image, Vec2i t0, Vec2i t1, Vec2i t2, Pixel color);
     // с использованием z-буфера для отсечения ненужных пикселей
     void fill_triangle(Image &image, Vec3i t0, Vec3i t1, Vec3i t2, Pixel color, std::vector<int> &zbuffer);
+
+    void fill_triangle(Image &image, Vec3i t0, Vec3i t1, Vec3i t2, float ity0, float ity1, float ity2, std::vector<int> &zbuffer);
 };
 
 
