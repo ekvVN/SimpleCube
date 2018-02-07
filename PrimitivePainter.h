@@ -39,6 +39,8 @@ public:
     // Соритировка вершин по высоте
     template <typename T>
     bool sort_verts(std::array<T, 3> &p);
+    template <typename T, typename TOther>
+    bool sort_verts(std::array<T, 3> &p, std::array<TOther, 3> &ity);
 };
 
 
