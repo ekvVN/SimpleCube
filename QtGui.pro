@@ -18,6 +18,7 @@ SOURCES += main.cpp\
         MyPainter.cpp\
         geometry.cpp\
         PrimitivePainter.cpp\
+        ViewMatrix.cpp\
         model.cpp
 
 HEADERS  += mainwindow.h\
@@ -26,6 +27,7 @@ HEADERS  += mainwindow.h\
         model.h\
         Matrix3x3.h\
         PrimitivePainter.h\
-        Image.h
+        Image.h\
+        ViewMatrix.h
 
 FORMS    += mainwindow.ui

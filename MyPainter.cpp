@@ -422,24 +422,23 @@ void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image, Vec3f &lig
 
 void MyPainter::DrawModel3(Image &image, Model *model)
 {
+    if (!_viewMatrix)
+    {
+        std::cerr << "viewMatrix is empty!!!!!!!!";
+        return;
+    }
+    auto viewMatrix = *_viewMatrix;
+
     int width = image.width();
     int height = image.height();
     const int depth = 255;
 
     Vec3f light_dir = Vec3f(0, 0, 1).normalize();
-    Vec3f eye(0, 0, 3);
-    Vec3f center(0, 0, 0);
 
     // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным
     clear_zbuffer(width * height);
 
     // draw the model
-    auto modelView = Matrix::lookat(eye, center, Vec3f(0, 1, 0));
-    auto projection = Matrix::identity(4);
-    auto viewPort = Matrix::viewport(width / 8, height / 8, width * 3 / 4, height * 3 / 4);
-    projection[3][2] = -1.f / (eye - center).norm();
-
-    Matrix m = (viewPort * projection * modelView);
 
     for (int i = 0; i < model->nfaces(); i++)
     {
@@ -450,7 +449,7 @@ void MyPainter::DrawModel3(Image &image, Model *model)
         for (int j = 0; j < 3; j++)
         {
             Vec3f v = model->vert(face[j].idxVertex);
-            screen_coords[j] = Vec3f(m * Matrix(v));
+            screen_coords[j] = Vec3f(viewMatrix * Matrix(v));
             world_coords[j] = v;
             intensity[j] = model->normal(face[j].idxNormal) * light_dir;
         }

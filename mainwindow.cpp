@@ -77,6 +77,17 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         qDebug() << "file not exist" << filename;
     }
+
+    // Установка матрицы просмотра/вьюпорта/камеры
+    auto viewMatrix = std::make_shared<ViewMatrix>();
+    viewMatrix->width = _width;
+    viewMatrix->height = _height;
+    viewMatrix->eye = {0, 0, 3};
+    viewMatrix->center = {0, 0, 0};
+    viewMatrix->up = {0, 1, 0};
+    viewMatrix->calcViewMatrix();
+
+    _myPainter._viewMatrix = viewMatrix;
 }
 
 MainWindow::~MainWindow()

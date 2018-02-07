@@ -34,6 +34,8 @@ set(SOURCE_FILES
         PrimitivePainter.cpp
         PrimitivePainter.h
         Image.h
+        ViewMatrix.cpp
+        ViewMatrix.h
         )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

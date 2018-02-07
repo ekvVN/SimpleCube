@@ -14,6 +14,7 @@
 #include "Matrix3x3.h"
 #include "PrimitivePainter.h"
 #include "Image.h"
+#include "ViewMatrix.h"
 
 class MyPainter
 {
@@ -23,6 +24,9 @@ class MyPainter
     std::vector<int> _zbuffer;
 
     const int depth  = 255;
+
+public:
+    std::shared_ptr<ViewMatrix> _viewMatrix;
 
 public:
     MyPainter();
