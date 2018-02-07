@@ -229,7 +229,10 @@ public:
                 Vec3f world_coords = model->vert(face[j].idxVertex);
                 screen_coords[j] = Vec2i((world_coords.x+1.)*width/2., (world_coords.y+1.)*height/2.);
             }
-            Pixel randColor = {rand()%255, rand()%255, rand()%255, 255};
+            auto b = static_cast<unsigned char>(rand() % 255);
+            auto g = static_cast<unsigned char>(rand() % 255);
+            auto r = static_cast<unsigned char>(rand() % 255);
+            Pixel randColor = {b, g, r, 255};
             _painter.fill_triangle(image, screen_coords, randColor);
         }
     }
@@ -254,7 +257,7 @@ public:
             n.normalize();
             float intensity = n*light_dir;
             if (intensity>0) {
-                Pixel color = {intensity*255, intensity*255, intensity*255, 255};
+                Pixel color = Pixel{255, 255, 255, 255} * intensity;
                 _painter.fill_triangle(image, screen_coords, color);
             }
         }
@@ -294,7 +297,7 @@ public:
             n.normalize();
             float intensity = n*light_dir;
             if (intensity>0) {
-                Pixel color = {intensity*255, intensity*255, intensity*255, 255};
+                Pixel color = Pixel{255, 255, 255, 255} * intensity;
                 _painter.fill_triangle(image, screen_coords, color, _zbuffer);
             }
         }
@@ -397,7 +400,7 @@ public:
 
                     if(intensity > 0)
                     {
-                        Pixel color = {intensity * 255, intensity * 255, intensity * 255, 255};
+                        Pixel color = Pixel{255, 255, 255, 255} * intensity;
                         image.set(P.x, P.y, color);
                     }
                 }
@@ -468,7 +471,7 @@ public:
 //                    intens += deltaIdeltaT;
 
 //                    double intens = intensityToDo;
-                    Pixel color = {intens*255, intens*255, intens*255, 255};
+                    Pixel color = Pixel{255, 255, 255, 255} * intens;
                     image.set(P.x, P.y, color);
                 }
             }

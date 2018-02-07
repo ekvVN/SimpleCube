@@ -21,9 +21,9 @@ struct Pixel
             ? 1.f
             : (intensity < 0.f ? 0.f :intensity);
 
-        res.B = B*intensity;
-        res.G = G*intensity;
-        res.R = R*intensity;
+        res.B = static_cast<unsigned char>(B*intensity);
+        res.G = static_cast<unsigned char>(G*intensity);
+        res.R = static_cast<unsigned char>(R*intensity);
         return res;
     }
 };
