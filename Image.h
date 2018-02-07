@@ -9,11 +9,23 @@
 
 struct Pixel
 {
-
     unsigned char B;
     unsigned char G;
     unsigned char R;
     unsigned char A;
+
+    Pixel operator *(float intensity)
+    {
+        Pixel res = *this;
+        intensity = intensity > 1.f
+            ? 1.f
+            : (intensity < 0.f ? 0.f :intensity);
+
+        res.B = B*intensity;
+        res.G = G*intensity;
+        res.R = R*intensity;
+        return res;
+    }
 };
 
 class Image
