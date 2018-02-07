@@ -56,24 +56,20 @@ public:
         auto viewPort   = Matrix::viewport(width/8, height/8, width*3/4, height*3/4);
         projection[3][2] = -1.f/(eye-center).norm();
 
-//        std::cerr << modelView << std::endl;
-//        std::cerr << projection << std::endl;
-//        std::cerr << viewPort << std::endl;
         Matrix m = (viewPort*projection*modelView);
-//        std::cerr << z << std::endl;
 
         for (int i=0; i<model->nfaces(); i++) {
             std::vector<faceVertex> face = model->face(i);
-            Vec3i screen_coords[3];
-            Vec3f world_coords[3];
-            float intensity[3];
+            std::array<Vec3i, 3> screen_coords;
+            std::array<Vec3f, 3> world_coords;
+            std::array<float, 3> intensity;
             for (int j=0; j<3; j++) {
                 Vec3f v = model->vert(face[j].idxVertex);
                 screen_coords[j] =  Vec3f(m*Matrix(v));
                 world_coords[j]  = v;
                 intensity[j] = model->normal(face[j].idxNormal) * light_dir;
             }
-            _painter.fill_triangle(image, screen_coords[0], screen_coords[1], screen_coords[2], intensity[0], intensity[1], intensity[2], _zbuffer);
+            _painter.fill_triangle(image, screen_coords, intensity, _zbuffer);
         }
     }
 
@@ -131,27 +127,27 @@ public:
 //            _painter.draw_line(image, 80, 40, 13, 20, blue);
 
             // 1.2 Отрисовка линий метеодом с перегрузкой для вершин
-            _painter.draw_line(image, Vec2i(13, 20), Vec2i(80, 40), white);
-            _painter.draw_line(image, Vec2i(20, 13), Vec2i(40, 80), blue);
-            _painter.draw_line(image, Vec2i(80, 40), Vec2i(13, 20), blue);
+            _painter.draw_line(image, {Vec2i(13, 20), Vec2i(80, 40)}, white);
+            _painter.draw_line(image, {Vec2i(20, 13), Vec2i(40, 80)}, blue);
+            _painter.draw_line(image, {Vec2i(80, 40), Vec2i(13, 20)}, blue);
 
             // 2.1 Отрисовка контуров треугольников
-            Vec2i t0[3] = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)};
-            Vec2i t1[3] = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)};
-            Vec2i t2[3] = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)};
+            std::array<Vec2i, 3> t0 = {Vec2i(10, 70),   Vec2i(50, 160),  Vec2i(70, 80)};
+            std::array<Vec2i, 3> t1 = {Vec2i(180, 50),  Vec2i(150, 1),   Vec2i(70, 180)};
+            std::array<Vec2i, 3> t2 = {Vec2i(180, 150), Vec2i(120, 160), Vec2i(130, 180)};
 
-            _painter.draw_triangle(image, t0[0], t0[1], t0[2], red);
-            _painter.draw_triangle(image, t1[0], t1[1], t1[2], green);
-            _painter.draw_triangle(image, t2[0], t2[1], t2[2], blue);
+            _painter.draw_triangle(image, t0, red);
+            _painter.draw_triangle(image, t1, green);
+            _painter.draw_triangle(image, t2, blue);
 
             // 2.1 Заливка треугольников
-            Vec2i fill_t0[3] = {Vec2i(210, 70),   Vec2i(250, 160),  Vec2i(270, 80)};
-            Vec2i fill_t1[3] = {Vec2i(380, 50),  Vec2i(350, 1),   Vec2i(270, 180)};
-            Vec2i fill_t2[3] = {Vec2i(380, 150), Vec2i(320, 160), Vec2i(330, 180)};
+            std::array<Vec2i, 3> fill_t0 = {Vec2i(210, 70),   Vec2i(250, 160),  Vec2i(270, 80)};
+            std::array<Vec2i, 3> fill_t1 = {Vec2i(380, 50),  Vec2i(350, 1),   Vec2i(270, 180)};
+            std::array<Vec2i, 3> fill_t2 = {Vec2i(380, 150), Vec2i(320, 160), Vec2i(330, 180)};
 
-            _painter.fill_triangle(image, fill_t0[0], fill_t0[1], fill_t0[2], red);
-            _painter.fill_triangle(image, fill_t1[0], fill_t1[1], fill_t1[2], green);
-            _painter.fill_triangle(image, fill_t2[0], fill_t2[1], fill_t2[2], blue);
+            _painter.fill_triangle(image, fill_t0, red);
+            _painter.fill_triangle(image, fill_t1, green);
+            _painter.fill_triangle(image, fill_t2, blue);
 
             // Тестовая модель с нормалями для заливки
             if(!_testModel)
@@ -211,12 +207,12 @@ public:
 
         for (int i=0; i<model->nfaces(); i++) {
             std::vector<faceVertex> face = model->face(i);
-            Vec2i screen_coords[3];
+            std::array<Vec2i, 3> screen_coords;
             for (int j=0; j<3; j++) {
                 Vec3f world_coords = model->vert(face[j].idxVertex);
                 screen_coords[j] = Vec2i((world_coords.x+1.)*width/2., (world_coords.y+1.)*height/2.);
             }
-            _painter.fill_triangle(image, screen_coords[0], screen_coords[1], screen_coords[2], color);
+            _painter.fill_triangle(image, screen_coords, color);
         }
     }
 
@@ -228,13 +224,13 @@ public:
 
         for (int i=0; i<model->nfaces(); i++) {
             std::vector<faceVertex> face = model->face(i);
-            Vec2i screen_coords[3];
+            std::array<Vec2i, 3> screen_coords;
             for (int j=0; j<3; j++) {
                 Vec3f world_coords = model->vert(face[j].idxVertex);
                 screen_coords[j] = Vec2i((world_coords.x+1.)*width/2., (world_coords.y+1.)*height/2.);
             }
             Pixel randColor = {rand()%255, rand()%255, rand()%255, 255};
-            _painter.fill_triangle(image, screen_coords[0], screen_coords[1], screen_coords[2], randColor);
+            _painter.fill_triangle(image, screen_coords, randColor);
         }
     }
 
@@ -247,8 +243,8 @@ public:
 
         for (int i=0; i<model->nfaces(); i++) {
             std::vector<faceVertex> face = model->face(i);
-            Vec2i screen_coords[3];
-            Vec3f world_coords[3];
+            std::array<Vec2i, 3> screen_coords;
+            std::array<Vec3f, 3> world_coords;
             for (int j=0; j<3; j++) {
                 Vec3f v = model->vert(face[j].idxVertex);
                 screen_coords[j] = Vec2i((v.x+1.)*width/2., (v.y+1.)*height/2.);
@@ -259,7 +255,7 @@ public:
             float intensity = n*light_dir;
             if (intensity>0) {
                 Pixel color = {intensity*255, intensity*255, intensity*255, 255};
-                _painter.fill_triangle(image, screen_coords[0], screen_coords[1], screen_coords[2], color);
+                _painter.fill_triangle(image, screen_coords, color);
             }
         }
     }
@@ -285,8 +281,8 @@ public:
 
         for (int i=0; i<model->nfaces(); i++) {
             std::vector<faceVertex> face = model->face(i);
-            Vec3i screen_coords[3];
-            Vec3f world_coords[3];
+            std::array<Vec3i, 3> screen_coords;
+            std::array<Vec3f, 3> world_coords;
             for (int j=0; j<3; j++) {
                 Vec3f v = model->vert(face[j].idxVertex);
                 screen_coords[j] = Vec3i((v.x+1.)*width/2., (v.y+1.)*height/2., (v.z+1.)*depth/2.);
@@ -299,7 +295,7 @@ public:
             float intensity = n*light_dir;
             if (intensity>0) {
                 Pixel color = {intensity*255, intensity*255, intensity*255, 255};
-                _painter.fill_triangle(image, screen_coords[0], screen_coords[1], screen_coords[2], color, _zbuffer);
+                _painter.fill_triangle(image, screen_coords, color, _zbuffer);
             }
         }
     }

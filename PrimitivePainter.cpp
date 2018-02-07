@@ -2,6 +2,7 @@
 // Created by root on 06.02.18.
 //
 
+#include <array>
 #include "PrimitivePainter.h"
 
 void PrimitivePainter::draw_line(Image &image, int x0, int y0, int x1, int y1, Pixel color)
@@ -43,71 +44,81 @@ void PrimitivePainter::draw_line(Image &image, int x0, int y0, int x1, int y1, P
     }
 }
 
-void PrimitivePainter::draw_line(Image &image, Vec2i p0, Vec2i p1, Pixel color)
+void PrimitivePainter::draw_line(Image &image, std::array<Vec2i, 2> p, Pixel color)
 {
-    draw_line(image, p0.x, p0.y, p1.x, p1.y, color);
+    draw_line(image, p[0].x, p[0].y, p[1].x, p[1].y, color);
 }
 
-void PrimitivePainter::draw_triangle(Image &image, Vec2i t0, Vec2i t1, Vec2i t2, Pixel color)
+void PrimitivePainter::draw_triangle(Image &image, std::array<Vec2i, 3> p, Pixel color)
 {
     // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-    if (t0.y > t1.y) std::swap(t0, t1);
-    if (t0.y > t2.y) std::swap(t0, t2);
-    if (t1.y > t2.y) std::swap(t1, t2);
+    if (p[0].y > p[1].y) std::swap(p[0], p[1]);
+    if (p[0].y > p[2].y) std::swap(p[0], p[2]);
+    if (p[1].y > p[2].y) std::swap(p[1], p[2]);
 
-    draw_line(image, t0, t1, color);
-    draw_line(image, t1, t2, color);
-    draw_line(image, t2, t0, color);
+    draw_line(image, {p[0], p[1]}, color);
+    draw_line(image, {p[1], p[2]}, color);
+    draw_line(image, {p[2], p[0]}, color);
 }
 
-void PrimitivePainter::fill_triangle(Image &image, Vec2i t0, Vec2i t1, Vec2i t2, Pixel color)
+void PrimitivePainter::fill_triangle(Image &image, std::array<Vec2i, 3> p, Pixel color)
 {
-    if (t0.y == t1.y && t0.y == t2.y) return; // i dont care about degenerate triangles
+    if (p[0].y == p[1].y && p[0].y == p[2].y) return; // i dont care about degenerate triangles
     // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-    if (t0.y > t1.y) std::swap(t0, t1);
-    if (t0.y > t2.y) std::swap(t0, t2);
-    if (t1.y > t2.y) std::swap(t1, t2);
-    int total_height = t2.y - t0.y;
+    if (p[0].y > p[1].y) std::swap(p[0], p[1]);
+    if (p[0].y > p[2].y) std::swap(p[0], p[2]);
+    if (p[1].y > p[2].y) std::swap(p[1], p[2]);
+    int total_height = p[2].y - p[0].y;
     for (int i = 0; i < total_height; i++)
     {
-        bool second_half = i > t1.y - t0.y || t1.y == t0.y;
-        int segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
+        bool second_half = i > p[1].y - p[0].y || p[1].y == p[0].y;
+        int segment_height = second_half
+            ? p[2].y - p[1].y
+            : p[1].y - p[0].y;
         float alpha = (float) i / total_height;
         // be careful: with above conditions no division by zero here
-        float beta = (float) (i - (second_half ? t1.y - t0.y : 0)) / segment_height;
-        Vec2i A = t0 + (t2 - t0) * alpha;
-        Vec2i B = second_half ? t1 + (t2 - t1) * beta : t0 + (t1 - t0) * beta;
+        float beta = (float) (i - (second_half ? p[1].y - p[0].y : 0)) / segment_height;
+        Vec2i A = p[0] + (p[2] - p[0]) * alpha;
+        Vec2i B = second_half
+            ? p[1] + (p[2] - p[1]) * beta
+            : p[0] + (p[1] - p[0]) * beta;
         if (A.x > B.x) std::swap(A, B);
         for (int j = A.x; j <= B.x; j++)
         {
-            image.set(j, t0.y + i, color); // attention, due to int casts t0.y+i != A.y
+            image.set(j, p[0].y + i, color); // attention, due to int casts t0.y+i != A.y
         }
     }
 }
 
-void PrimitivePainter::fill_triangle(Image &image, Vec3i t0, Vec3i t1, Vec3i t2, Pixel color, std::vector<int> &zbuffer)
+void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, Pixel color, std::vector<int> &zbuffer)
 {
     int width = image.width();
     int height = image.height();
 
-    if (t0.y == t1.y && t0.y == t2.y) return; // i dont care about degenerate triangles
-    if (t0.y > t1.y) std::swap(t0, t1);
-    if (t0.y > t2.y) std::swap(t0, t2);
-    if (t1.y > t2.y) std::swap(t1, t2);
-    int total_height = t2.y - t0.y;
+    if (p[0].y == p[1].y && p[0].y == p[2].y) return; // i dont care about degenerate triangles
+    if (p[0].y > p[1].y) std::swap(p[0], p[1]);
+    if (p[0].y > p[2].y) std::swap(p[0], p[2]);
+    if (p[1].y > p[2].y) std::swap(p[1], p[2]);
+    int total_height = p[2].y - p[0].y;
     for (int i = 0; i < total_height; i++)
     {
-        bool second_half = i > t1.y - t0.y || t1.y == t0.y;
-        int segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
+        bool second_half = i > p[1].y - p[0].y || p[1].y == p[0].y;
+        int segment_height = second_half
+            ? p[2].y - p[1].y
+            : p[1].y - p[0].y;
         float alpha = (float) i / total_height;
         // be careful: with above conditions no division by zero here
-        float beta = (float) (i - (second_half ? t1.y - t0.y : 0)) / segment_height;
-        Vec3i A = t0 + Vec3f(t2 - t0) * alpha;
-        Vec3i B = second_half ? t1 + Vec3f(t2 - t1) * beta : t0 + Vec3f(t1 - t0) * beta;
+        float beta = (float) (i - (second_half ? p[1].y - p[0].y : 0)) / segment_height;
+        Vec3i A = p[0] + Vec3f(p[2] - p[0]) * alpha;
+        Vec3i B = second_half
+            ? p[1] + Vec3f(p[2] - p[1]) * beta
+            : p[0] + Vec3f(p[1] - p[0]) * beta;
         if (A.x > B.x) std::swap(A, B);
         for (int j = A.x; j <= B.x; j++)
         {
-            float phi = B.x == A.x ? 1. : (float) (j - A.x) / (float) (B.x - A.x);
+            float phi = B.x == A.x
+                ? 1.
+                : (float) (j - A.x) / (float) (B.x - A.x);
             Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
             int idx = P.x + P.y * width;
             if (idx < zbuffer.size() && zbuffer[idx] < P.z)
@@ -119,41 +130,44 @@ void PrimitivePainter::fill_triangle(Image &image, Vec3i t0, Vec3i t1, Vec3i t2,
     }
 }
 
-void PrimitivePainter::fill_triangle(Image &image, Vec3i t0, Vec3i t1, Vec3i t2, float ity0, float ity1, float ity2,
-                                     std::vector<int> &zbuffer)
+void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::array<float, 3> ity, std::vector<int> &zbuffer)
 {
     int width = image.width();
     int height = image.height();
 
-    if (t0.y == t1.y && t0.y == t2.y) return; // i dont care about degenerate triangles
-    if (t0.y > t1.y)
+    if (p[0].y == p[1].y && p[0].y == p[2].y) return; // i dont care about degenerate triangles
+    if (p[0].y > p[1].y)
     {
-        std::swap(t0, t1);
-        std::swap(ity0, ity1);
+        std::swap(p[0], p[1]);
+        std::swap(ity[0], ity[1]);
     }
-    if (t0.y > t2.y)
+    if (p[0].y > p[2].y)
     {
-        std::swap(t0, t2);
-        std::swap(ity0, ity2);
+        std::swap(p[0], p[2]);
+        std::swap(ity[0], ity[2]);
     }
-    if (t1.y > t2.y)
+    if (p[1].y > p[2].y)
     {
-        std::swap(t1, t2);
-        std::swap(ity1, ity2);
+        std::swap(p[1], p[2]);
+        std::swap(ity[1], ity[2]);
     }
 
-    int total_height = t2.y - t0.y;
+    int total_height = p[2].y - p[0].y;
     for (int i = 0; i < total_height; i++)
     {
-        bool second_half = i > t1.y - t0.y || t1.y == t0.y;
-        int segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
+        bool second_half = i > p[1].y - p[0].y || p[1].y == p[0].y;
+        int segment_height = second_half ? p[2].y - p[1].y : p[1].y - p[0].y;
         float alpha = (float) i / total_height;
-        float beta = (float) (i - (second_half ? t1.y - t0.y : 0)) /
-                     segment_height; // be careful: with above conditions no division by zero here
-        Vec3i A = t0 + Vec3f(t2 - t0) * alpha;
-        Vec3i B = second_half ? t1 + Vec3f(t2 - t1) * beta : t0 + Vec3f(t1 - t0) * beta;
-        float ityA = ity0 + (ity2 - ity0) * alpha;
-        float ityB = second_half ? ity1 + (ity2 - ity1) * beta : ity0 + (ity1 - ity0) * beta;
+        // be careful: with above conditions no division by zero here
+        float beta = (float) (i - (second_half ? p[1].y - p[0].y : 0)) / segment_height;
+        Vec3i A = p[0] + Vec3f(p[2] - p[0]) * alpha;
+        Vec3i B = second_half
+            ? p[1] + Vec3f(p[2] - p[1]) * beta
+            : p[0] + Vec3f(p[1] - p[0]) * beta;
+        float ityA = ity[0] + (ity[2] - ity[0]) * alpha;
+        float ityB = second_half
+            ? ity[1] + (ity[2] - ity[1]) * beta
+            : ity[0] + (ity[1] - ity[0]) * beta;
         if (A.x > B.x)
         {
             std::swap(A, B);
@@ -161,7 +175,9 @@ void PrimitivePainter::fill_triangle(Image &image, Vec3i t0, Vec3i t1, Vec3i t2,
         }
         for (int j = A.x; j <= B.x; j++)
         {
-            float phi = B.x == A.x ? 1. : (float) (j - A.x) / (B.x - A.x);
+            float phi = B.x == A.x
+                ? 1.
+                : (float) (j - A.x) / (B.x - A.x);
             Vec3i P = Vec3f(A) + Vec3f(B - A) * phi;
             float ityP = ityA + (ityB - ityA) * phi;
             int idx = P.x + P.y * width;
