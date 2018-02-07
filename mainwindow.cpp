@@ -11,7 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _ticks(0),
     _rotateVectLeftRight(0.0f, 1.0f, 0.0f),
     _rotateVectUpDown(1.0f, 0.0f, 0.0f),
-    _rotateRadAngle(0.05f)
+    _rotateRadAngle(0.05f),
+    _model(nullptr)
 {
     ui->setupUi(this);
 
@@ -114,6 +115,9 @@ void MainWindow::RedrawPixmap()
 
 void MainWindow::RotateModel(Matrix3x3<float> &mRotate)
 {
+    if(!_model)
+        return;
+
     _model->apply(mRotate);
     RedrawPixmap();
 }
