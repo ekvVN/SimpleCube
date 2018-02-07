@@ -199,14 +199,8 @@ void MyPainter::fill_model_with_z_buffer(Model *model, Image &image, Vec3f &ligh
     int height = image.height();
     const int depth  = 255;
 
-    // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным:
-    auto size = width*height;
-    if (_zbuffer.size() != size)
-        _zbuffer.resize(size);
-
-    for (int i=0; i<width*height; i++) {
-        _zbuffer[i] = std::numeric_limits<int>::min();
-    }
+    // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным
+    clear_zbuffer(width * height);
 
     for (int i=0; i<model->nfaces(); i++) {
         std::vector<faceVertex> face = model->face(i);
@@ -392,14 +386,8 @@ void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image, Vec3f &lig
     int height = image.height();
     const int depth  = 255;
 
-    // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным:
-    auto size = width*height;
-    if (_zbuffer.size() != size)
-        _zbuffer.resize(size);
-
-    for (int i=0; i<width*height; i++) {
-        _zbuffer[i] = std::numeric_limits<int>::min();
-    }
+    // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным
+    clear_zbuffer(width * height);
 
     for (int i=0; i<model->nfaces(); i++) {
         std::vector<faceVertex> face = model->face(i);
@@ -442,15 +430,8 @@ void MyPainter::DrawModel3(Image &image, Model *model)
     Vec3f eye(1,1,3);
     Vec3f center(0,0,0);
 
-
-    // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным:
-    auto size = width*height;
-    if (_zbuffer.size() != size)
-        _zbuffer.resize(size);
-
-    for (int i=0; i<width*height; i++) {
-        _zbuffer[i] = std::numeric_limits<int>::min();
-    }
+    // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным
+    clear_zbuffer(width * height);
 
     // draw the model
     auto modelView  = Matrix::lookat(eye, center, Vec3f(0,1,0));
@@ -473,4 +454,13 @@ void MyPainter::DrawModel3(Image &image, Model *model)
         }
         _painter.fill_triangle(image, screen_coords, intensity, _zbuffer);
     }
+}
+
+void MyPainter::clear_zbuffer(int length)
+{
+    if (_zbuffer.size() != length)
+        _zbuffer.resize(length);
+
+    auto value = std::numeric_limits<int>::min();
+    std::fill(_zbuffer.begin(), _zbuffer.end(), value);
 }

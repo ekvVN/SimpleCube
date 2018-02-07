@@ -85,6 +85,8 @@ private:
     void fill_model_with_z_buffer2(Model *model, Image &image, Vec3f &light_dir);
 
     void DrawModel3(Image& image, Model *model);
+
+    void clear_zbuffer(int length);
 };
 
 
