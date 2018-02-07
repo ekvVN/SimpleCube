@@ -30,34 +30,6 @@ public:
     // Установка рисуемой модели
     void SetModel(Model *model);
 
-    Matrix viewport(int x, int y, int w, int h) {
-        Matrix m = Matrix::identity(4);
-        m[0][3] = x+w/2.f;
-        m[1][3] = y+h/2.f;
-        m[2][3] = depth/2.f;
-
-        m[0][0] = w/2.f;
-        m[1][1] = h/2.f;
-        m[2][2] = depth/2.f;
-        return m;
-    }
-
-    Matrix lookat(Vec3f eye, Vec3f center, Vec3f up) {
-        Vec3f z = (eye-center).normalize();
-        Vec3f x = (up^z).normalize();
-        Vec3f y = (z^x).normalize();
-        Matrix res = Matrix::identity(4);
-        for (int i=0; i<3; i++) {
-            res[0][i] = x[i];
-            res[1][i] = y[i];
-            res[2][i] = z[i];
-            res[i][3] = -center[i];
-        }
-        return res;
-    }
-
-
-
     void DrawModel3(Image& image, Model *model)
     {
         int width = image.width();
@@ -79,15 +51,15 @@ public:
         }
 
 // draw the model
-        Matrix ModelView  = lookat(eye, center, Vec3f(0,1,0));
-        Matrix Projection = Matrix::identity(4);
-        Matrix ViewPort   = viewport(width/8, height/8, width*3/4, height*3/4);
-        Projection[3][2] = -1.f/(eye-center).norm();
+        auto modelView  = Matrix::lookat(eye, center, Vec3f(0,1,0));
+        auto projection = Matrix::identity(4);
+        auto viewPort   = Matrix::viewport(width/8, height/8, width*3/4, height*3/4);
+        projection[3][2] = -1.f/(eye-center).norm();
 
-//        std::cerr << ModelView << std::endl;
-//        std::cerr << Projection << std::endl;
-//        std::cerr << ViewPort << std::endl;
-        Matrix z = (ViewPort*Projection*ModelView);
+//        std::cerr << modelView << std::endl;
+//        std::cerr << projection << std::endl;
+//        std::cerr << viewPort << std::endl;
+        Matrix m = (viewPort*projection*modelView);
 //        std::cerr << z << std::endl;
 
         for (int i=0; i<model->nfaces(); i++) {
@@ -97,7 +69,7 @@ public:
             float intensity[3];
             for (int j=0; j<3; j++) {
                 Vec3f v = model->vert(face[j].idxVertex);
-                screen_coords[j] =  Vec3f(ViewPort*Projection*ModelView*Matrix(v));
+                screen_coords[j] =  Vec3f(m*Matrix(v));
                 world_coords[j]  = v;
                 intensity[j] = model->normal(face[j].idxNormal) * light_dir;
             }
