@@ -22,8 +22,9 @@ void ViewMatrix::calcViewMatrix()
 {
     auto modelView = Matrix::lookat(eye, center, up);
     auto projection = Matrix::identity(4);
-    auto viewPort = Matrix::viewport(width / 8, height / 8, width * 3 / 4, height * 3 / 4);
-    projection[3][2] = -1.f / (eye - center).norm();
+//    auto viewPort = Matrix::viewport(width / 8, height / 8, width * 3 / 4, height * 3 / 4);
+    auto viewPort = Matrix::viewport(0, 0, width, height);
+//    projection[3][2] = -1.f / (eye - center).norm();
 
     _m = (viewPort * projection * modelView);
 }
