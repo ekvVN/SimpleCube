@@ -426,8 +426,8 @@ void MyPainter::DrawModel3(Image &image, Model *model)
     int height = image.height();
     const int depth = 255;
 
-    Vec3f light_dir = Vec3f(1, -1, 1).normalize();
-    Vec3f eye(1, 1, 3);
+    Vec3f light_dir = Vec3f(0, 0, 1).normalize();
+    Vec3f eye(0, 0, 3);
     Vec3f center(0, 0, 0);
 
     // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным
