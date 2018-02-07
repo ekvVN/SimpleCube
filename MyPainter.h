@@ -23,34 +23,12 @@ class MyPainter
     std::vector<int> _zbuffer;
 
     const int depth  = 255;
+
 public:
+    MyPainter();
 
-    MyPainter()
-        : _model(nullptr)
-    {
-    }
-
-    void SetModel(Model *model)
-    {
-        _model = model;
-    }
-
-    void RotateModel(Matrix3x3<float> m)
-    {
-        for (int i = 0; i < _model->nverts(); i++)
-        {
-            Vec3f v = _model->vert(i);
-            Vec3f resV = v * m;
-            _model->set_vert(i, resV);
-        }
-
-        for (int i = 0; i < _model->nnormals(); i++)
-        {
-            Vec3f n = _model->normal(i);
-            Vec3f resN = n * m;
-            _model->set_normal(i, resN);
-        }
-    }
+    // Установка рисуемой модели
+    void SetModel(Model *model);
 
     Matrix viewport(int x, int y, int w, int h) {
         Matrix m = Matrix::identity(4);

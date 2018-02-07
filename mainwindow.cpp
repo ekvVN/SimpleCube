@@ -112,31 +112,33 @@ void MainWindow::RedrawPixmap()
     _pixmap = QPixmap::fromImage(local);
 }
 
+void MainWindow::RotateModel(Matrix3x3<float> &mRotate)
+{
+    _model->apply(mRotate);
+    RedrawPixmap();
+}
+
 void MainWindow::OnPressLeft()
 {
-    auto m = GetRotateMatrix(_rotateVectLeftRight, _rotateRadAngle);
-    _myPainter.RotateModel(m);
-    RedrawPixmap();
+    auto mRotate = GetRotateMatrix(_rotateVectLeftRight, _rotateRadAngle);
+    RotateModel(mRotate);
 }
 
 void MainWindow::OnPressRight()
 {
-    auto m = GetRotateMatrix(_rotateVectLeftRight, -_rotateRadAngle);
-    _myPainter.RotateModel(m);
-    RedrawPixmap();
+    auto mRotate = GetRotateMatrix(_rotateVectLeftRight, -_rotateRadAngle);
+    RotateModel(mRotate);
 }
 
 void MainWindow::OnPressUp()
 {
-    auto m = GetRotateMatrix(_rotateVectUpDown, _rotateRadAngle);
-    _myPainter.RotateModel(m);
-    RedrawPixmap();
+    auto mRotate = GetRotateMatrix(_rotateVectUpDown, _rotateRadAngle);
+    RotateModel(mRotate);
 }
 
 void MainWindow::OnPressDown()
 {
-    auto m = GetRotateMatrix(_rotateVectUpDown, -_rotateRadAngle);
-    _myPainter.RotateModel(m);
-    RedrawPixmap();
+    auto mRotate = GetRotateMatrix(_rotateVectUpDown, -_rotateRadAngle);
+    RotateModel(mRotate);
 }
 

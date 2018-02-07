@@ -51,6 +51,8 @@ private:
     // Вектор оси поворота вверх/вниз
     Vec3f _rotateVectUpDown;
 
+    void RotateModel(Matrix3x3<float> &mRotate);
+
 private slots:
     //Слот для обновления
     void updateImage();

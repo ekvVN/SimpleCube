@@ -85,4 +85,19 @@ void Model::set_normal(int i, Vec3f n) {
     normals_[i] = n;
 }
 
+void Model::apply(Matrix3x3<float> m)
+{
+    for (int i = 0; i < verts_.size(); i++)
+    {
+        auto &v = verts_[i];
+        v = v * m;
+    }
+
+    for (int i = 0; i < normals_.size(); i++)
+    {
+        auto &n = normals_[i];
+        n = n * m;
+    }
+}
+
 

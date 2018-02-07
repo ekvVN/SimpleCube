@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "geometry.h"
+#include "Matrix3x3.h"
 
 struct faceVertex
 {
@@ -33,6 +34,9 @@ public:
 	void set_vert(int i, Vec3f v);
 	void set_normal(int i, Vec3f n);
 	std::vector<faceVertex> face(int idx);
+
+    // применить матрицу к модели
+    void apply(Matrix3x3<float> m);
 };
 
 #endif //__MODEL_H__

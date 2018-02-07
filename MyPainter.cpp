@@ -4,7 +4,12 @@
 
 #include "MyPainter.h"
 
-//void MyPainter::DrawCube(Pixel *pixs, int width, int height)
-//{
-//
-//}
+MyPainter::MyPainter()
+    : _model(nullptr)
+{
+}
+
+void MyPainter::SetModel(Model *model)
+{
+    _model = model;
+}
