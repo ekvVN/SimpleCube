@@ -34,6 +34,7 @@ public:
     // с использованием z-буфера для отсечения ненужных пикселей
     void fill_triangle(Image &image, std::array<Vec3i, 3> p, Pixel color, std::vector<int> &zbuffer);
     void fill_triangle(Image &image, std::array<Vec3i, 3> p, std::array<float, 3> ity, std::vector<int> &zbuffer);
+    void fill_triangle2(Image &image, std::array<Vec3i, 3> p, std::array<float, 3> ity, std::vector<int> &zbuffer);
 
 
     // Соритировка вершин по высоте
