@@ -131,10 +131,10 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
     if(!sort_verts(p, ity))
         return;
 
-    if(ity[0] > 0 && ity[1] > 0 && ity[2] > 0)
-    {
-        int a = 0;
-    }
+//    if(ity[0] > 0 && ity[1] > 0 && ity[2] > 0)
+//    {
+//        int a = 0;
+//    }
 
     int width = image.width();
     int height = image.height();
@@ -213,12 +213,12 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
             Int_R = w * Int_B + (1 - w) * Int_C;
         }
 
-        if(ity[0] > 0 && ity[1] > 0 && ity[2] > 0)
-        {
-            std::cout << Q << " = " << Int_Q << " ; "
-                      << R << " = " << Int_R << " ; "
-                      << std::endl;
-        }
+//        if(ity[0] > 0 && ity[1] > 0 && ity[2] > 0)
+//        {
+//            std::cout << Q << " = " << Int_Q << " ; "
+//                      << R << " = " << Int_R << " ; "
+//                      << std::endl;
+//        }
 
         if (Q.x > R.x)
         {
@@ -226,12 +226,12 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
             std::swap(Int_Q, Int_R);
         }
         // Направление вектора
-        Vec3f QR = (R - Q);
+        Vec3f QR = Vec3f(R) - Vec3f(Q);
         int total_x = QR.x;
         // цикл по всем пикселям отрезка QR
-        for (int j = Q.x; j <= R.x; j++)
+        for (int j = 0; j <= total_x; j++)
         {
-            float deltaX = (float) i / total_x;
+            float deltaX = (float) j / total_x;
 
             // Координаты отрисовываемого пикселя
             Vec3i T = Vec3f(Q) + QR * deltaX;
@@ -239,7 +239,7 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
             // Отношение "t" и интенсивность
             float t = R.x == Q.x
                 ? 1.f
-                : (float)(R.x - j) / (R.x - Q.x);
+                : (float)(R.x - T.x) / (R.x - Q.x);
             float Int_T = t * Int_Q + (1 - t) * Int_R;
 
             // Доп. проверки и отрисовка
