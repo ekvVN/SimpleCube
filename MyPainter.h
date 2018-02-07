@@ -22,6 +22,7 @@ class MyPainter
     Model *_model;
     std::shared_ptr<Model> _testModel;  // Тестовая модель с нормалями для заливки
     std::vector<int> _zbuffer;
+    Vec3f _light_dir; // направлени света
 
     const int depth  = 255;
 
@@ -33,6 +34,7 @@ public:
 
     // Установка рисуемой модели
     void SetModel(Model *model);
+    void setLightDir(Vec3f light_dir);
 
     /*
      * Нарисовать что-то :)
@@ -53,13 +55,11 @@ private:
     void random_fill_model(Model *model, Image &image);
 
     // Заливка треугольников модели с учетом нормалей и направления света
-    // light_dir - вектор направление света
-    void fill_model_with_normal(Model *model, Image &image, Vec3f &light_dir);
+    void fill_model_with_normal(Model *model, Image &image);
 
     // Заливка треугольников модели с учетом нормалей и направления света
     // и с использованием z-буфера для отсечения ненужных пикселей
-    // light_dir - вектор направление света
-    void fill_model_with_z_buffer(Model *model, Image &image, Vec3f &light_dir);
+    void fill_model_with_z_buffer(Model *model, Image &image);
 
     // вершина треугольника
     struct triangleVertex
@@ -77,16 +77,16 @@ private:
 
     // Заливка треугольника методом Гуро
     // Аналог fill_triangle - с использованием z-буфера для отсечения ненужных пикселей
-    void fill_triangle_guro(triangleVertex t[3], Image &image, Vec3f &light_dir, std::vector<int> &zbuffer);
+    void fill_triangle_guro(triangleVertex t[3], Image &image, std::vector<int> &zbuffer);
 
     // Заливка треугольника методом Гуро
     // Аналог fill_triangle - с использованием z-буфера для отсечения ненужных пикселей
     // TODO неееееее раааботаает :)
-    void fill_triangle_guro2(triangleVertex t[3], Image &image, Vec3f &light_dir, std::vector<int> &zbuffer);
+    void fill_triangle_guro2(triangleVertex t[3], Image &image, std::vector<int> &zbuffer);
 
     // Аналог fill_model_with_z_buffer
     // Заливка методом Гуро
-    void fill_model_with_z_buffer2(Model *model, Image &image, Vec3f &light_dir);
+    void fill_model_with_z_buffer2(Model *model, Image &image);
 
     void DrawModel3(Image& image, Model *model);
 

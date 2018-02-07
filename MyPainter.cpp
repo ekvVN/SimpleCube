@@ -6,12 +6,18 @@
 
 MyPainter::MyPainter()
     : _model(nullptr)
+    , _light_dir(Vec3f(0, 0, 1))
 {
 }
 
 void MyPainter::SetModel(Model *model)
 {
     _model = model;
+}
+
+void MyPainter::setLightDir(Vec3f light_dir)
+{
+    _light_dir = light_dir.normalize();
 }
 
 void MyPainter::DrawCube(Pixel *pixs, int width, int height)
@@ -34,25 +40,18 @@ void MyPainter::DrawCube(Pixel *pixs, int width, int height)
         // 2.2 Заливка треугольников модели рандомным цветом
 //            random_fill_model(_model, image);
 
-        Vec3f light_dir= Vec3f(1,-1,1).normalize();
-        Vec3f eye(1,1,3);
-        Vec3f center(0,0,0);
         DrawModel3(image, _model);
-//            DrawModel3(image, _model, light_dir, eye, center);
-
-
 
         // 2.3 Заливка треугольников модели с учетом нормалей и направления света
-//            fill_model_with_normal(_model, image, light_dir);
+//        fill_model_with_normal(_model, image);
 
         // 3.1 Заливка треугольников модели с учетом нормалей и направления света
         // и с использованием z-буфера для отсечения ненужных пикселей
-//            fill_model_with_z_buffer(_model, image, light_dir);
+//        fill_model_with_z_buffer(_model, image);
 
         // Аналог fill_model_with_z_buffer
         // Заливка методом Гуро
-//            Vec3f light_dir_guro(0,0,1);    // вектор направления света (в обратную сторону сделал)
-//            fill_model_with_z_buffer2(_model, image, light_dir);
+//        fill_model_with_z_buffer2(_model, image);
     }
     else
     {
@@ -108,9 +107,8 @@ void MyPainter::DrawCube(Pixel *pixs, int width, int height)
             };
             _testModel = std::make_shared<Model>(verts, normals, faces);
         }
-        Vec3f light_dir(0,0,-1);    // вектор направления света
 //            random_fill_model(_testModel.get(), image);
-        fill_model_with_z_buffer(_testModel.get(), image, light_dir);
+        fill_model_with_z_buffer(_testModel.get(), image);
     }
 }
 
@@ -169,7 +167,7 @@ void MyPainter::random_fill_model(Model *model, Image &image)
     }
 }
 
-void MyPainter::fill_model_with_normal(Model *model, Image &image, Vec3f &light_dir)
+void MyPainter::fill_model_with_normal(Model *model, Image &image)
 {
     int width = image.width();
     int height = image.height();
@@ -185,7 +183,7 @@ void MyPainter::fill_model_with_normal(Model *model, Image &image, Vec3f &light_
         }
         Vec3f n = (world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
         n.normalize();
-        float intensity = n*light_dir;
+        float intensity = n * _light_dir;
         if (intensity>0) {
             Pixel color = Pixel{255, 255, 255, 255} * intensity;
             _painter.fill_triangle(image, screen_coords, color);
@@ -193,7 +191,7 @@ void MyPainter::fill_model_with_normal(Model *model, Image &image, Vec3f &light_
     }
 }
 
-void MyPainter::fill_model_with_z_buffer(Model *model, Image &image, Vec3f &light_dir)
+void MyPainter::fill_model_with_z_buffer(Model *model, Image &image)
 {
     int width = image.width();
     int height = image.height();
@@ -215,7 +213,7 @@ void MyPainter::fill_model_with_z_buffer(Model *model, Image &image, Vec3f &ligh
         Vec3f n = (world_coords[0]-world_coords[1])^(world_coords[0]-world_coords[2]);    // AB ^ AC
 //            Vec3f n = (world_coords[0]-world_coords[2])^(world_coords[0]-world_coords[1]);      // AC ^ AB
         n.normalize();
-        float intensity = n*light_dir;
+        float intensity = n * _light_dir;
         if (intensity>0) {
             Pixel color = Pixel{255, 255, 255, 255} * intensity;
             _painter.fill_triangle(image, screen_coords, color, _zbuffer);
@@ -231,7 +229,7 @@ double MyPainter::CalcIntensity(Vec3f n, Vec3f light_dir)
     return intensity;
 }
 
-void MyPainter::fill_triangle_guro(MyPainter::triangleVertex *t, Image &image, Vec3f &light_dir, std::vector<int> &zbuffer)
+void MyPainter::fill_triangle_guro(MyPainter::triangleVertex *t, Image &image, std::vector<int> &zbuffer)
 {
     auto &tr0 = t[0];
     auto &tr1 = t[1];
@@ -245,13 +243,13 @@ void MyPainter::fill_triangle_guro(MyPainter::triangleVertex *t, Image &image, V
     int height = image.height();
     double intensity = 0;
 
-    light_dir = light_dir*-1;
+    _light_dir = _light_dir*-1;
 
     // ToDo расчет нормалей для теста (убрать потом)
 //        Vec3f n = (t[2].world_v-t[0].world_v)^(t[1].world_v-t[0].world_v);
     Vec3f n = (t[1].world_v-t[0].world_v)^(t[2].world_v-t[0].world_v);
     n.normalize();
-    float intensityToDo = n*light_dir;
+    float intensityToDo = n*_light_dir;
 
     t[0].n.normalize();
     t[1].n.normalize();
@@ -273,9 +271,9 @@ void MyPainter::fill_triangle_guro(MyPainter::triangleVertex *t, Image &image, V
 
         // Интерполяция Гуро
         // Интенсивность в вершинах треугольника
-        double intensT0 = t[0].n*light_dir;
-        double intensT1 = t[1].n*light_dir;
-        double intensT2 = t[2].n*light_dir;
+        double intensT0 = t[0].n*_light_dir;
+        double intensT1 = t[1].n*_light_dir;
+        double intensT2 = t[2].n*_light_dir;
 
         // koefA и koefB - коэффициент интенсивности точек A и B на ребрах треугольника
         double koefA = t0.x == t1.x ? 1. : (A.x - t1.x) / (t0.x - t1.x); // (1)
@@ -313,7 +311,7 @@ void MyPainter::fill_triangle_guro(MyPainter::triangleVertex *t, Image &image, V
     }
 }
 
-void MyPainter::fill_triangle_guro2(MyPainter::triangleVertex *t, Image &image, Vec3f &light_dir, std::vector<int> &zbuffer)
+void MyPainter::fill_triangle_guro2(MyPainter::triangleVertex *t, Image &image, std::vector<int> &zbuffer)
 {
     Vec3i &t0 = t[0].screen_v;
     Vec3i &t1 = t[1].screen_v;
@@ -322,7 +320,7 @@ void MyPainter::fill_triangle_guro2(MyPainter::triangleVertex *t, Image &image, 
     // ToDo расчет нормалей для теста (убрать потом)
     Vec3f n = (t[2].world_v -t[0].world_v)^(t[1].world_v-t[0].world_v);
     n.normalize();
-    double intensityToDo = n*light_dir;
+    double intensityToDo = n*_light_dir;
 
     int width = image.width();
     int height = image.height();
@@ -344,9 +342,9 @@ void MyPainter::fill_triangle_guro2(MyPainter::triangleVertex *t, Image &image, 
 
         // Интерполяция Гуро
         // Интенсивность в вершинах треугольника
-        double intensT0 = CalcIntensity(t[0].n, light_dir);
-        double intensT1 = CalcIntensity(t[1].n, light_dir);
-        double intensT2 = CalcIntensity(t[2].n, light_dir);
+        double intensT0 = CalcIntensity(t[0].n, _light_dir);
+        double intensT1 = CalcIntensity(t[1].n, _light_dir);
+        double intensT2 = CalcIntensity(t[2].n, _light_dir);
 
         // koefA и koefB - коэффициент интенсивности точек A и B на ребрах треугольника
         double koefA = t0.x == t1.x ? 1. : (A.x - t1.x) / (t0.x - t1.x); // (1)
@@ -380,7 +378,7 @@ void MyPainter::fill_triangle_guro2(MyPainter::triangleVertex *t, Image &image, 
     }
 }
 
-void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image, Vec3f &light_dir)
+void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image)
 {
     int width = image.width();
     int height = image.height();
@@ -400,7 +398,7 @@ void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image, Vec3f &lig
         }
 //            Vec3f n = (world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
 //            n.normalize();
-//            double intensity = n*light_dir;
+//            double intensity = n*_light_dir;
 
         triangleVertex t[3];
         t[0].screen_v = screen_coords[0];
@@ -415,8 +413,8 @@ void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image, Vec3f &lig
         t[1].n = model->normal(face[1].idxNormal);
         t[2].n = model->normal(face[2].idxNormal);
 
-//            fill_triangle_guro(t, image, light_dir, _zbuffer);
-        fill_triangle_guro2(t, image, light_dir, _zbuffer);
+//            fill_triangle_guro(t, image, _zbuffer);
+        fill_triangle_guro2(t, image, _zbuffer);
     }
 }
 
@@ -433,7 +431,6 @@ void MyPainter::DrawModel3(Image &image, Model *model)
     int height = image.height();
     const int depth = 255;
 
-    Vec3f light_dir = Vec3f(0, 0, 1).normalize();
 
     // Поскольку у нас экран двумерный, то z-буфер тоже должен быть двумерным
     clear_zbuffer(width * height);
@@ -449,9 +446,10 @@ void MyPainter::DrawModel3(Image &image, Model *model)
         for (int j = 0; j < 3; j++)
         {
             Vec3f v = model->vert(face[j].idxVertex);
-            screen_coords[j] = Vec3f(viewMatrix * Matrix(v));
+            Vec3f n = model->normal(face[j].idxNormal);
+            screen_coords[j] = Vec3f(viewMatrix * Matrix(v));   // расчет координат, видимых с камеры
             world_coords[j] = v;
-            intensity[j] = model->normal(face[j].idxNormal) * light_dir;
+            intensity[j] = n * _light_dir; // расчет интенсивности света каждой вершины (в зависимости от ее нормали)
         }
         _painter.fill_triangle(image, screen_coords, intensity, _zbuffer);
     }

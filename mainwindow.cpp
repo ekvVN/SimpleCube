@@ -78,6 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
         qDebug() << "file not exist" << filename;
     }
 
+    // Установка направления света
+    _myPainter.setLightDir(Vec3f(0, 0, 1));
+
     // Установка матрицы просмотра/вьюпорта/камеры
     auto viewMatrix = std::make_shared<ViewMatrix>();
     viewMatrix->width = _width;
