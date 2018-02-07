@@ -7,6 +7,7 @@
 MyPainter::MyPainter()
     : _model(nullptr)
     , _light_dir(Vec3f(0, 0, 1))
+    , _drawType(DrawType_Wireframe)
 {
 }
 
@@ -20,6 +21,11 @@ void MyPainter::setLightDir(Vec3f light_dir)
     _light_dir = light_dir.normalize();
 }
 
+void MyPainter::setDrawType(DrawType drawType)
+{
+    _drawType = drawType;
+}
+
 void MyPainter::DrawCube(Pixel *pixs, int width, int height)
 {
     Image image(pixs, width, height);
@@ -31,27 +37,46 @@ void MyPainter::DrawCube(Pixel *pixs, int width, int height)
 
     if(_model)
     {
+        switch(_drawType)
+        {
+            case DrawType_Wireframe:
+                draw_model(image, _model, white);
+                break;
+            case DrawType_SolidFlat:
+                // Заливка треугольников модели
+                fill_model_with_z_buffer(image, _model);
+                break;
+            case DrawType_SolidGuro:
+                DrawModel3(image, _model);
+                break;
+            case DrawType_SolidFong:
+                DrawModel3(image, _model);
+                break;
+            default:
+                std::cerr << "Wrong drawType!!!" << std::endl;
+                break;
+        }
+
         // 1. Отрисовка контуров модели
-//            draw_model(_model, image, white);
+//            draw_model(image, _model, white);
 
         // 2.1. Заливка треугольников модели
-//            fill_model(_model, image, green);
+//            fill_model(image, _model, green);
 
         // 2.2 Заливка треугольников модели рандомным цветом
-//            random_fill_model(_model, image);
+//            random_fill_model(image, _model);
 
-        DrawModel3(image, _model);
 
         // 2.3 Заливка треугольников модели с учетом нормалей и направления света
-//        fill_model_with_normal(_model, image);
+//        fill_model_with_normal(image, _model);
 
         // 3.1 Заливка треугольников модели с учетом нормалей и направления света
         // и с использованием z-буфера для отсечения ненужных пикселей
-//        fill_model_with_z_buffer(_model, image);
+//        fill_model_with_z_buffer(image, _model);
 
         // Аналог fill_model_with_z_buffer
         // Заливка методом Гуро
-//        fill_model_with_z_buffer2(_model, image);
+//        fill_model_with_z_buffer2(image, _model);
     }
     else
     {
@@ -108,11 +133,11 @@ void MyPainter::DrawCube(Pixel *pixs, int width, int height)
             _testModel = std::make_shared<Model>(verts, normals, faces);
         }
 //            random_fill_model(_testModel.get(), image);
-        fill_model_with_z_buffer(_testModel.get(), image);
+        fill_model_with_z_buffer(image, _testModel.get());
     }
 }
 
-void MyPainter::draw_model(Model *model, Image &image, Pixel color)
+void MyPainter::draw_model(Image &image, Model *model, Pixel color)
 {
     int width = image.width();
     int height = image.height();
@@ -131,7 +156,7 @@ void MyPainter::draw_model(Model *model, Image &image, Pixel color)
     }
 }
 
-void MyPainter::fill_model(Model *model, Image &image, Pixel color)
+void MyPainter::fill_model(Image &image, Model *model, Pixel color)
 {
     int width = image.width();
     int height = image.height();
@@ -147,7 +172,7 @@ void MyPainter::fill_model(Model *model, Image &image, Pixel color)
     }
 }
 
-void MyPainter::random_fill_model(Model *model, Image &image)
+void MyPainter::random_fill_model(Image &image, Model *model)
 {
     int width = image.width();
     int height = image.height();
@@ -167,7 +192,7 @@ void MyPainter::random_fill_model(Model *model, Image &image)
     }
 }
 
-void MyPainter::fill_model_with_normal(Model *model, Image &image)
+void MyPainter::fill_model_with_normal(Image &image, Model *model)
 {
     int width = image.width();
     int height = image.height();
@@ -191,7 +216,7 @@ void MyPainter::fill_model_with_normal(Model *model, Image &image)
     }
 }
 
-void MyPainter::fill_model_with_z_buffer(Model *model, Image &image)
+void MyPainter::fill_model_with_z_buffer(Image &image, Model *model)
 {
     int width = image.width();
     int height = image.height();
@@ -229,7 +254,7 @@ double MyPainter::CalcIntensity(Vec3f n, Vec3f light_dir)
     return intensity;
 }
 
-void MyPainter::fill_triangle_guro(MyPainter::triangleVertex *t, Image &image, std::vector<int> &zbuffer)
+void MyPainter::fill_triangle_guro(Image &image, MyPainter::triangleVertex *t, std::vector<int> &zbuffer)
 {
     auto &tr0 = t[0];
     auto &tr1 = t[1];
@@ -311,7 +336,7 @@ void MyPainter::fill_triangle_guro(MyPainter::triangleVertex *t, Image &image, s
     }
 }
 
-void MyPainter::fill_triangle_guro2(MyPainter::triangleVertex *t, Image &image, std::vector<int> &zbuffer)
+void MyPainter::fill_triangle_guro2(Image &image, MyPainter::triangleVertex *t, std::vector<int> &zbuffer)
 {
     Vec3i &t0 = t[0].screen_v;
     Vec3i &t1 = t[1].screen_v;
@@ -378,7 +403,7 @@ void MyPainter::fill_triangle_guro2(MyPainter::triangleVertex *t, Image &image, 
     }
 }
 
-void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image)
+void MyPainter::fill_model_with_z_buffer2(Image &image, Model *model)
 {
     int width = image.width();
     int height = image.height();
@@ -413,8 +438,8 @@ void MyPainter::fill_model_with_z_buffer2(Model *model, Image &image)
         t[1].n = model->normal(face[1].idxNormal);
         t[2].n = model->normal(face[2].idxNormal);
 
-//            fill_triangle_guro(t, image, _zbuffer);
-        fill_triangle_guro2(t, image, _zbuffer);
+//            fill_triangle_guro(image, t, _zbuffer);
+        fill_triangle_guro2(image, t, _zbuffer);
     }
 }
 
@@ -463,3 +488,4 @@ void MyPainter::clear_zbuffer(int length)
     auto value = std::numeric_limits<int>::min();
     std::fill(_zbuffer.begin(), _zbuffer.end(), value);
 }
+

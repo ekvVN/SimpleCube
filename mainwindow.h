@@ -32,6 +32,8 @@ private:
     QAction *_actRight;
     QAction *_actUp;
     QAction *_actDown;
+    // Действие для смены режима отрисовки
+    QAction *_actChangeDrawType;
 
     QLabel *_lblPixmap;
     int _width;
@@ -40,6 +42,7 @@ private:
     Model *_model;
 
     MyPainter _myPainter;
+    DrawType _drawType;
     int _ticks;
 
     void RedrawPixmap();
@@ -61,6 +64,8 @@ private slots:
     void OnPressRight();
     void OnPressUp();
     void OnPressDown();
+
+    void OnDrawTypeChanged();
 };
 
 #endif // MAINWINDOW_H

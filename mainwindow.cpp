@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _rotateVectLeftRight(0.0f, 1.0f, 0.0f),
     _rotateVectUpDown(1.0f, 0.0f, 0.0f),
     _rotateRadAngle(0.05f),
-    _model(nullptr)
+    _model(nullptr),
+    _drawType(DrawType_Wireframe)
 {
     ui->setupUi(this);
 
@@ -29,21 +30,26 @@ MainWindow::MainWindow(QWidget *parent) :
     _actRight = new QAction(this);
     _actUp = new QAction(this);
     _actDown = new QAction(this);
+    // Действие для смены режима отрисовки
+    _actChangeDrawType = new QAction(this);
 
     connect(_actLeft, &QAction::triggered, this, &MainWindow::OnPressLeft);
     connect(_actRight, &QAction::triggered, this, &MainWindow::OnPressRight);
     connect(_actUp, &QAction::triggered, this, &MainWindow::OnPressUp);
     connect(_actDown, &QAction::triggered, this, &MainWindow::OnPressDown);
+    connect(_actChangeDrawType, &QAction::triggered, this, &MainWindow::OnDrawTypeChanged);
 
     _actUp->setShortcut(QKeySequence("W"));
     _actLeft->setShortcut(QKeySequence("A"));
     _actDown->setShortcut(QKeySequence("S"));
     _actRight->setShortcut(QKeySequence("D"));
+    _actChangeDrawType->setShortcut(QKeySequence("Q"));
 
     addAction(_actLeft);
     addAction(_actRight);
     addAction(_actUp);
     addAction(_actDown);
+    addAction(_actChangeDrawType);
 
 
     // Label на который будет рисоваться _pixmap;
@@ -158,5 +164,12 @@ void MainWindow::OnPressDown()
 {
     auto mRotate = GetRotateMatrix(_rotateVectUpDown, -_rotateRadAngle);
     RotateModel(mRotate);
+}
+
+void MainWindow::OnDrawTypeChanged()
+{
+    auto newValue = (_drawType + 1) % DrawType_EndIdx;
+    _drawType = static_cast<DrawType>(newValue);
+    _myPainter.setDrawType(_drawType);
 }
 

@@ -16,6 +16,18 @@
 #include "Image.h"
 #include "ViewMatrix.h"
 
+enum DrawType
+{
+    DrawType_Wireframe, // Отрисовка сетки
+    DrawType_SolidFlat, // Заливка треугольников (1-ый вариант)
+    DrawType_SolidGuro, // Заливка методом Гуро (2-ой вариант)
+    DrawType_SolidFong, // Заливка методом Фонга (3-ий вариант)
+    /**
+     * EndIdx // Должен быть последним !!!
+     */
+    DrawType_EndIdx
+};
+
 class MyPainter
 {
     PrimitivePainter _painter;
@@ -23,6 +35,7 @@ class MyPainter
     std::shared_ptr<Model> _testModel;  // Тестовая модель с нормалями для заливки
     std::vector<int> _zbuffer;
     Vec3f _light_dir; // направлени света
+    DrawType _drawType;
 
     const int depth  = 255;
 
@@ -35,6 +48,7 @@ public:
     // Установка рисуемой модели
     void SetModel(Model *model);
     void setLightDir(Vec3f light_dir);
+    void setDrawType(DrawType drawType);
 
     /*
      * Нарисовать что-то :)
@@ -46,20 +60,20 @@ public:
 
 private:
     // Отрисовка контуров треугольников модели
-    void draw_model(Model *model, Image &image, Pixel color);
+    void draw_model(Image &image, Model *model, Pixel color);
 
     // Заливка треугольников модели
-    void fill_model(Model *model, Image &image, Pixel color);
+    void fill_model(Image &image, Model *model, Pixel color);
 
     // Заливка треугольников модели рандомным цветом
-    void random_fill_model(Model *model, Image &image);
+    void random_fill_model(Image &image, Model *model);
 
     // Заливка треугольников модели с учетом нормалей и направления света
-    void fill_model_with_normal(Model *model, Image &image);
+    void fill_model_with_normal(Image &image, Model *model);
 
     // Заливка треугольников модели с учетом нормалей и направления света
     // и с использованием z-буфера для отсечения ненужных пикселей
-    void fill_model_with_z_buffer(Model *model, Image &image);
+    void fill_model_with_z_buffer(Image &image, Model *model);
 
     // вершина треугольника
     struct triangleVertex
@@ -77,16 +91,16 @@ private:
 
     // Заливка треугольника методом Гуро
     // Аналог fill_triangle - с использованием z-буфера для отсечения ненужных пикселей
-    void fill_triangle_guro(triangleVertex t[3], Image &image, std::vector<int> &zbuffer);
+    void fill_triangle_guro(Image &image, triangleVertex t[3], std::vector<int> &zbuffer);
 
     // Заливка треугольника методом Гуро
     // Аналог fill_triangle - с использованием z-буфера для отсечения ненужных пикселей
     // TODO неееееее раааботаает :)
-    void fill_triangle_guro2(triangleVertex t[3], Image &image, std::vector<int> &zbuffer);
+    void fill_triangle_guro2(Image &image, triangleVertex t[3], std::vector<int> &zbuffer);
 
     // Аналог fill_model_with_z_buffer
     // Заливка методом Гуро
-    void fill_model_with_z_buffer2(Model *model, Image &image);
+    void fill_model_with_z_buffer2(Image &image, Model *model);
 
     void DrawModel3(Image& image, Model *model);
 
