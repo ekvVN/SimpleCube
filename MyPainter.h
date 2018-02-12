@@ -15,6 +15,7 @@
 #include "PrimitivePainter.h"
 #include "Image.h"
 #include "ViewMatrix.h"
+#include "PointLight.h"
 
 enum DrawType
 {
@@ -35,12 +36,15 @@ class MyPainter
     std::shared_ptr<Model> _testModel;  // Тестовая модель с нормалями для заливки
     std::vector<int> _zbuffer;
     Vec3f _light_dir; // направлени света
+    PointLight _pLight; // точечтный источник света
     DrawType _drawType;
 
     const int depth  = 255;
 
 public:
     std::shared_ptr<ViewMatrix> _viewMatrix;
+
+    void setPointLight(PointLight pLight);
 
 public:
     MyPainter();

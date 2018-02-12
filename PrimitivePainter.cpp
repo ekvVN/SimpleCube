@@ -150,11 +150,11 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
     float Int_C = ity[2];
 
     // Направления векторов
-    Vec3f AC = (C - A);
-    Vec3f AB = (B - A);
-    Vec3f BC = (C - B);
+    Vec3f AC = Vec3f(C) - Vec3f(A);
+    Vec3f AB = Vec3f(B) - Vec3f(A);
+    Vec3f BC = Vec3f(C) - Vec3f(B);
 
-    int total_height = p[2].y - p[0].y;
+    int total_height = C.y - A.y;
     for (int i = 0; i < total_height; i++)
     {
         bool second_half = B.y == A.y || i > B.y - A.y;
@@ -178,14 +178,14 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
             // w = RB / AB
             float u = C.x == A.x
                 ? 1.f
-                : (float)(C.x - Q.x) / (C.x - A.x);
+                : (float)(C.x - Q.x) / (float)(C.x - A.x);
             float w = B.x == A.x
                 ? 1.f
-                : (float)(B.x - R.x) / (B.x - A.x);
+                : (float)(B.x - R.x) / (float)(B.x - A.x);
 
             // Интенсивность в вершинах отрезка QR
-            Int_Q = u * Int_A + (1 - u) * Int_C;
-            Int_R = w * Int_A + (1 - w) * Int_B;
+            Int_Q = u * Int_A + (1.f - u) * Int_C;
+            Int_R = w * Int_A + (1.f - w) * Int_B;
         }
         else
         {
@@ -203,14 +203,14 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
             // w = RC / BC
             float u = C.x == A.x
                 ? 1.f
-                : (float)(C.x - Q.x) / (C.x - A.x);
+                : (float)(C.x - Q.x) / (float)(C.x - A.x);
             float w = C.x == B.x
                 ? 1.f
-                : (float)(C.x - R.x) / (C.x - B.x);
+                : (float)(C.x - R.x) / (float)(C.x - B.x);
 
             // Интенсивность в вершинах отрезка QR
-            Int_Q = u * Int_A + (1 - u) * Int_C;
-            Int_R = w * Int_B + (1 - w) * Int_C;
+            Int_Q = u * Int_A + (1.f - u) * Int_C;
+            Int_R = w * Int_B + (1.f - w) * Int_C;
         }
 
 //        if(ity[0] > 0 && ity[1] > 0 && ity[2] > 0)
@@ -239,8 +239,8 @@ void PrimitivePainter::fill_triangle(Image &image, std::array<Vec3i, 3> p, std::
             // Отношение "t" и интенсивность
             float t = R.x == Q.x
                 ? 1.f
-                : (float)(R.x - T.x) / (R.x - Q.x);
-            float Int_T = t * Int_Q + (1 - t) * Int_R;
+                : (float)(R.x - T.x) / (float)(R.x - Q.x);
+            float Int_T = t * Int_Q + (1.f - t) * Int_R;
 
             // Доп. проверки и отрисовка
             if (T.x >= width || T.y >= height || T.x < 0 || T.y < 0)

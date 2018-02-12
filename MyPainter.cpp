@@ -474,7 +474,12 @@ void MyPainter::DrawModel3(Image &image, Model *model)
             Vec3f n = model->normal(face[j].idxNormal);
             screen_coords[j] = Vec3f(viewMatrix * Matrix(v));   // расчет координат, видимых с камеры
             world_coords[j] = v;
-            intensity[j] = n * _light_dir; // расчет интенсивности света каждой вершины (в зависимости от ее нормали)
+//            intensity[j] = n * _light_dir; // расчет интенсивности света каждой вершины (в зависимости от ее нормали)
+
+            // расчет интенсивности от точечного источника света для нормали
+            auto d = distance(_pLight.lightPosition(), v); // distance - расстояние от вершины до источника света
+            float K = 1.0f; // любая константа, подбирается экспериментальным путем
+            intensity[j] = _pLight * n / (d * K);
         }
         _painter.fill_triangle(image, screen_coords, intensity, _zbuffer);
     }
@@ -487,5 +492,10 @@ void MyPainter::clear_zbuffer(int length)
 
     auto value = std::numeric_limits<int>::min();
     std::fill(_zbuffer.begin(), _zbuffer.end(), value);
+}
+
+void MyPainter::setPointLight(PointLight pLight)
+{
+    _pLight = pLight;
 }
 

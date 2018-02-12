@@ -36,6 +36,8 @@ set(SOURCE_FILES
         Image.h
         ViewMatrix.cpp
         ViewMatrix.h
+        PointLight.cpp
+        PointLight.h
         )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

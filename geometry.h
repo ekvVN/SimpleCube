@@ -38,10 +38,17 @@ template <class t> struct Vec3 {
 typedef Vec2<float> Vec2f;
 typedef Vec2<int>   Vec2i;
 typedef Vec3<float> Vec3f;
+typedef Vec3<double> Vec3d;
 typedef Vec3<int>   Vec3i;
 
 template <> template <> Vec3<int>::Vec3(const Vec3<float> &v);
 template <> template <> Vec3<float>::Vec3(const Vec3<int> &v);
+
+template <> template <> Vec3<int>::Vec3(const Vec3<double> &v);
+template <> template <> Vec3<double>::Vec3(const Vec3<int> &v);
+
+template <> template <> Vec3<float>::Vec3(const Vec3<double> &v);
+template <> template <> Vec3<double>::Vec3(const Vec3<float> &v);
 
 
 template <class t> std::ostream& operator<<(std::ostream& s, Vec2<t>& v) {
@@ -52,6 +59,19 @@ template <class t> std::ostream& operator<<(std::ostream& s, Vec2<t>& v) {
 template <class t> std::ostream& operator<<(std::ostream& s, Vec3<t>& v) {
     s << "(" << v.x << ", " << v.y << ", " << v.z << ")";
     return s;
+}
+
+////////
+
+// Расстояние между двумя точками
+template<class T>
+float distance(Vec3<T> p1, Vec3<T> p2)
+{
+    return std::sqrt(
+        (p2.x - p1.x) * (p2.x - p1.x) +
+        (p2.y - p1.y) * (p2.y - p1.y) +
+        (p2.z - p1.z) * (p2.z - p1.z)
+    );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

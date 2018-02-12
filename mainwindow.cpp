@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "PointLight.h"
 
 #include <QDebug>
 #include <QVBoxLayout>
@@ -65,11 +66,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Чтение модели
 //    const char *filename = "obj/empty";
-    const char *filename = "obj/african_head.obj";
+//    const char *filename = "obj/african_head.obj";
 //    const char *filename = "obj/Cube.obj";
 //    const char *filename = "obj/cube.obj";
 //    const char *filename = "obj/cube2.obj";
-//    const char *filename = "obj/CubeMy.obj";
+    const char *filename = "obj/CubeMy.obj";
 //    const char *filename = "obj/CubeMy3.obj";
 //    const char *filename = "obj/CubeMy4.obj";
 //    const char *filename = "obj/Cylinder.obj";
@@ -86,6 +87,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Установка направления света
     _myPainter.setLightDir(Vec3f(0, 0, 1));
+
+    // Установка точечного источника света
+    PointLight pLight;
+    pLight.setLightPosition(Vec3f(0, 0, 1));
+    pLight.setLightDir(Vec3f(0, 0, 1));
+    pLight.setLightIntensity(1.0f);
+    pLight.setKd(1.0f);
+
+    _myPainter.setPointLight(pLight);
 
     // Установка матрицы просмотра/вьюпорта/камеры
     auto viewMatrix = std::make_shared<ViewMatrix>();

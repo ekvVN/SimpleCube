@@ -20,6 +20,7 @@ SOURCES += main.cpp\
         geometry.cpp\
         PrimitivePainter.cpp\
         ViewMatrix.cpp\
+        PointLight.cpp\
         model.cpp
 
 HEADERS  += mainwindow.h\
@@ -29,6 +30,7 @@ HEADERS  += mainwindow.h\
         Matrix3x3.h\
         PrimitivePainter.h\
         Image.h\
+        PointLight.h\
         ViewMatrix.h
 
 FORMS    += mainwindow.ui
